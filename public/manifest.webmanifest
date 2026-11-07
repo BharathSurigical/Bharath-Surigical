@@ -3,8 +3,8 @@
   "short_name": "Bharath Surgical",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#f5f7f6",
-  "theme_color": "#2e6b5e",
+  "background_color": "#ffffff",
+  "theme_color": "#0a3438",
   "icons": [
     {
       "src": "/assets/logo.jpg",

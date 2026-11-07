@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState, useCallback, useRef, memo } from 'react';
+import React, { useEffect, useMemo, useState, useRef, memo } from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles.css';
 
@@ -11,8 +11,17 @@ if ('scrollRestoration' in window.history) {
 }
 window.scrollTo(0, 0);
 
+// Each product's photos live in public/assets/products/<slug>/ as 1.jpg, 2.jpg, ...
+// in gallery order. Products not listed here have 3 photos.
+const photoCounts = {
+  'absorbent-gauze-cloth': 2,
+  'bandage-cloth': 1,
+  'gauze-dressing-pad': 2,
+  'gauze-swabs-sterile': 2,
+};
+
 function gallery(slug) {
-  return [`${slug}-1.jpg`, `${slug}-2.jpg`, `${slug}-3.jpg`];
+  return Array.from({ length: photoCounts[slug] ?? 3 }, (_, i) => `products/${slug}/${i + 1}.jpg`);
 }
 
 const products = [
@@ -92,22 +101,39 @@ const products = [
   //   ]
   // },
   {
-    slug: 'gauze-swabs-sterile-non-sterile',
-    name: 'Gauze Swabs - Sterile and Non-Sterile',
-    summary: 'Swabs for dressing, cleaning and absorption during clinical procedures.',
+    slug: 'gauze-swabs-sterile',
+    name: 'Gauze Swabs - Sterile',
+    summary: 'Sterile swabs for dressing, cleaning and absorption during clinical procedures.',
     description:
       'Sterile Gauze Swab is a medical dressing made from high-quality, absorbent cotton gauze that has been sterilized to eliminate all microorganisms. It is designed for use in clinical settings where wound contact is required, ensuring a safe, infection-free environment.',
     sizes: ['5cm x 5cm x 8ply and 12ply', '7.5cm x 7.5cm x 8ply and 12ply', '10cm x 10cm x 8ply and 12ply'],
-    features: ['Sterile and non-sterile options', '100% cotton gauze', 'High absorption', 'Soft wound contact'],
+    features: ['ETO sterile', '100% cotton gauze', 'High absorption', 'Soft wound contact'],
     applications: ['Wound dressing', 'Surgical cleaning', 'Exudate absorption', 'Clinical procedure trays'],
     specifications: [
       { label: 'Material', value: '100% Absorbent Cotton Gauze (USP/BP standards)' },
       { label: 'Sizes Available', value: '5cm x 5cm, 7.5cm x 7.5cm, 10cm x 10cm' },
       { label: 'Ply Options', value: '8-ply, 12-ply, 16-ply' },
       { label: 'Fold Type', value: 'American Fold (inner folded edges to prevent loose threads)' },
-      { label: 'Sterility', value: 'ETO Sterile or Non-Sterile options available' },
-      { label: 'Sterile Packing', value: 'Peelable paper-film pouches (packages of 2s, 5s, 10s)' },
-      { label: 'Non-Sterile Packing', value: '100 pieces per bulk paper wrap' }
+      { label: 'Sterility', value: 'ETO Sterile' },
+      { label: 'Packaging', value: 'Peelable paper-film pouches (packages of 2s, 5s, 10s)' }
+    ]
+  },
+  {
+    slug: 'gauze-swabs-non-sterile',
+    name: 'Gauze Swabs - Non-Sterile',
+    summary: 'Non-sterile swabs for general dressing, cleaning and absorption, supplied in bulk wraps.',
+    description:
+      'Non-Sterile Gauze Swab is a soft, absorbent dressing made from high-quality cotton gauze and supplied in bulk paper wraps. It is suited to general cleaning, dressing and absorption where a sterile swab is not required.',
+    sizes: ['5cm x 5cm x 8ply and 12ply', '7.5cm x 7.5cm x 8ply and 12ply', '10cm x 10cm x 8ply and 12ply'],
+    features: ['Non-sterile bulk supply', '100% cotton gauze', 'High absorption', 'Soft contact surface'],
+    applications: ['General cleaning', 'Exudate absorption', 'Clinic and ward stock', 'Hospital dressing supply'],
+    specifications: [
+      { label: 'Material', value: '100% Absorbent Cotton Gauze (USP/BP standards)' },
+      { label: 'Sizes Available', value: '5cm x 5cm, 7.5cm x 7.5cm, 10cm x 10cm' },
+      { label: 'Ply Options', value: '8-ply, 12-ply, 16-ply' },
+      { label: 'Fold Type', value: 'American Fold (inner folded edges to prevent loose threads)' },
+      { label: 'Sterility', value: 'Non-Sterile' },
+      { label: 'Packaging', value: '100 pieces per bulk paper wrap' }
     ]
   },
   {
@@ -278,37 +304,143 @@ const products = [
 ].map((product) => ({
   ...product,
   images: gallery(product.slug),
-  image: `${product.slug}-1.jpg`,
+  image: gallery(product.slug)[0],
 }));
 
 const governmentSupplyStates = [
   {
     name: 'Tamil Nadu',
-    logo: 'tn.jpg',
-  },
-  {
-    name: 'Kerala',
-    logo: 'kerala.png',
-  },
-  {
-    name: 'Karnataka',
-    logo: 'karnataka.jpg',
+    logo: 'government/tn.jpg',
   },
 ];
 
+const categories = ['All Products', 'Gauze & Bandage', 'Surgical Cotton', 'Hospital Wear & Disposables'];
+
+const categoryBySlug = {
+  'absorbent-gauze-cloth': 'Gauze & Bandage',
+  'bandage-cloth': 'Gauze & Bandage',
+  'roller-bandage-paper-packing': 'Gauze & Bandage',
+  'individual-roller-bandage': 'Gauze & Bandage',
+  'gauze-swabs-sterile': 'Gauze & Bandage',
+  'gauze-swabs-non-sterile': 'Gauze & Bandage',
+  'gauze-mopping-pad': 'Gauze & Bandage',
+  'gauze-dressing-pad': 'Gauze & Bandage',
+  'gamjee-roll': 'Gauze & Bandage',
+  'absorbent-cotton-roll': 'Surgical Cotton',
+  'cotton-balls': 'Surgical Cotton',
+  'patient-gown': 'Hospital Wear & Disposables',
+  'surgeon-doctor-gown': 'Hospital Wear & Disposables',
+  'disposables-bed-sheet-pillow-cover': 'Hospital Wear & Disposables',
+  'dialysis-kit': 'Hospital Wear & Disposables',
+};
+
+const navItems = [
+  { route: 'products', label: 'Products' },
+  { route: 'about', label: 'About' },
+  { route: 'government', label: 'Government Orders' },
+  { route: 'quality', label: 'Quality' },
+  { route: 'contact', label: 'Contact' },
+];
+
+const certifications = [
+  { name: 'ISO 9001', detail: 'Quality management' },
+  { name: 'ISO 13485', detail: 'Medical devices quality management' },
+  { name: 'CE', detail: 'Compliance' },
+];
+
+const stats = [
+  { value: '50+', label: 'Years of quality care with a human touch' },
+  { value: '25+', label: 'Years exporting to Gulf countries' },
+  { value: String(products.length), label: 'Products in the range' },
+];
+
+const companyName = 'Bharath Surgical Dressing Company';
+const whatsappNumber = '918838655774';
+const phones = [
+  { display: '+91 88386 55774', tel: '+918838655774' },
+  { display: '+91 96263 51470', tel: '+919626351470' },
+];
+const emails = ['info@bharathsurgicals.in', 'bharathgauze1968@gmail.com'];
+const address = '542/15, Alangulam Road, Chatrapatti, Virudhunagar, Tamil Nadu, 626102';
+const mapQuery = encodeURIComponent(
+  `${companyName}, ${address}, India`
+);
+
+// Keeps a line from starting with the dash in names like "Roller Bandage - Paper Packing".
+function displayName(name) {
+  return name.replace(' - ', ' – ');
+}
+
+function whatsappLink(productName) {
+  const subject = productName || 'your surgical dressing products';
+  const message = `Hello ${companyName}, I want to enquire about ${subject}.`;
+  return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+}
+
 /* ========================================
-   SVG Icon Components
+   Icons
    ======================================== */
-function SearchIcon({ size = 18 }) {
+function Icon({ size = 18, strokeWidth = 2, children }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <circle cx="11" cy="11" r="8" />
-      <line x1="21" y1="21" x2="16.65" y2="16.65" />
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      {children}
     </svg>
   );
 }
 
-function WhatsAppIcon({ size = 24 }) {
+function SearchIcon(props) {
+  return <Icon {...props}><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></Icon>;
+}
+
+function PhoneIcon(props) {
+  return <Icon {...props}><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" /></Icon>;
+}
+
+function MailIcon(props) {
+  return <Icon {...props}><rect x="2" y="4" width="20" height="16" rx="2" /><path d="m22 7-10 6L2 7" /></Icon>;
+}
+
+function PinIcon(props) {
+  return <Icon {...props}><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z" /><circle cx="12" cy="10" r="3" /></Icon>;
+}
+
+function GlobeIcon(props) {
+  return <Icon {...props}><circle cx="12" cy="12" r="10" /><line x1="2" y1="12" x2="22" y2="12" /><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" /></Icon>;
+}
+
+function ShieldIcon(props) {
+  return <Icon {...props}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /><path d="m9 12 2 2 4-4" /></Icon>;
+}
+
+function TruckIcon(props) {
+  return <Icon {...props}><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2" /><path d="M15 18H9" /><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.62l-3.48-4.35A1 1 0 0 0 17.52 8H14" /><circle cx="17" cy="18" r="2" /><circle cx="7" cy="18" r="2" /></Icon>;
+}
+
+function TagIcon(props) {
+  return <Icon {...props}><path d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" /><line x1="7" y1="7" x2="7.01" y2="7" /></Icon>;
+}
+
+function CheckIcon(props) {
+  return <Icon strokeWidth={2.5} {...props}><polyline points="20 6 9 17 4 12" /></Icon>;
+}
+
+function ArrowRightIcon(props) {
+  return <Icon {...props}><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></Icon>;
+}
+
+function ArrowLeftIcon(props) {
+  return <Icon {...props}><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></Icon>;
+}
+
+function ArrowUpIcon(props) {
+  return <Icon {...props}><line x1="12" y1="19" x2="12" y2="5" /><polyline points="5 12 12 5 19 12" /></Icon>;
+}
+
+function PlusIcon(props) {
+  return <Icon {...props}><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></Icon>;
+}
+
+function WhatsAppIcon({ size = 20 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
       <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
@@ -316,90 +448,43 @@ function WhatsAppIcon({ size = 24 }) {
   );
 }
 
-function PhoneIcon({ size = 18 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-    </svg>
-  );
-}
-
-function ChatIcon({ size = 18 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-    </svg>
-  );
-}
-
-function ArrowUpIcon({ size = 20 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <line x1="12" y1="19" x2="12" y2="5" />
-      <polyline points="5 12 12 5 19 12" />
-    </svg>
-  );
-}
-
-function ArrowLeftIcon({ size = 16 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <line x1="19" y1="12" x2="5" y2="12" />
-      <polyline points="12 19 5 12 12 5" />
-    </svg>
-  );
-}
-
-function GlobeIcon({ size = 48 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <circle cx="12" cy="12" r="10" />
-      <line x1="2" y1="12" x2="22" y2="12" />
-      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-    </svg>
-  );
-}
-
 /* ========================================
-   Custom Hooks
+   Routing and scrolling
    ======================================== */
-function useScrollPosition(threshold = 300) {
-  const [isScrolled, setIsScrolled] = useState(false);
-
-  useEffect(() => {
-    let ticking = false;
-    const onScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          setIsScrolled(window.scrollY > threshold);
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, [threshold]);
-
-  return isScrolled;
+function getHashRoute() {
+  return window.location.hash.replace(/^#\/?/, '');
 }
 
-function useIntersectionObserver(options = {}) {
+function scrollToRoute(route) {
+  const target = document.getElementById(route || 'home');
+  if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// The hash doesn't change when a link to the current route is clicked, so the
+// route effect can't handle that case. Scroll to the section directly instead.
+function rescrollIfCurrent(event) {
+  const href = event.target.closest('a')?.getAttribute('href');
+  if (!href?.startsWith('#/')) return;
+  const route = href.slice(2);
+  if (route === getHashRoute() && !route.startsWith('product/')) scrollToRoute(route);
+}
+
+function useReveal() {
   const ref = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     const element = ref.current;
-    if (!element) return;
+    if (!element) return undefined;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
-          observer.unobserve(element);
+          observer.disconnect();
         }
       },
-      { threshold: 0.1, ...options }
+      { rootMargin: '0px 0px -6% 0px' }
     );
 
     observer.observe(element);
@@ -409,26 +494,76 @@ function useIntersectionObserver(options = {}) {
   return [ref, isVisible];
 }
 
-/* ========================================
-   Image with Skeleton Loader
-   ======================================== */
-function LazyImage({ src, alt, width, height, className = '', loading = 'lazy', ...props }) {
-  const [loaded, setLoaded] = useState(false);
+function useScrolledPast(threshold) {
+  const [isPast, setIsPast] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setIsPast(window.scrollY > threshold);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [threshold]);
+
+  return isPast;
+}
+
+function prefersReducedMotion() {
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
+/* Counts a value like "50+" up from zero the first time it scrolls into view. */
+function CountUp({ value }) {
+  const [, digits, suffix] = value.match(/^(\d+)(.*)$/);
+  const target = Number(digits);
+  const [ref, isVisible] = useReveal();
+  const [current, setCurrent] = useState(() => (prefersReducedMotion() ? target : 0));
+
+  useEffect(() => {
+    if (!isVisible || prefersReducedMotion()) return undefined;
+
+    let frame;
+    const start = performance.now();
+    const duration = 1200;
+    const tick = (now) => {
+      const progress = Math.min((now - start) / duration, 1);
+      setCurrent(Math.round(target * (1 - (1 - progress) ** 3)));
+      if (progress < 1) frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [isVisible, target]);
 
   return (
-    <div className={`img-skeleton ${loaded ? 'loaded' : ''}`}>
-      <img
-        src={src}
-        alt={alt}
-        width={width}
-        height={height}
-        loading={loading}
-        className={className}
-        onLoad={() => setLoaded(true)}
-        {...props}
-      />
-    </div>
+    <span ref={ref}>
+      <span className="visually-hidden">{value}</span>
+      <span aria-hidden="true">{current}{suffix}</span>
+    </span>
   );
+}
+
+/* Highlights the nav item for the section currently in view. */
+function useActiveSection(enabled) {
+  const [active, setActive] = useState('');
+
+  useEffect(() => {
+    if (!enabled) return undefined;
+
+    const sections = navItems.map((item) => document.getElementById(item.route)).filter(Boolean);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActive(entry.target.id);
+          else setActive((current) => (current === entry.target.id ? '' : current));
+        });
+      },
+      { rootMargin: '-35% 0px -60% 0px' }
+    );
+
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
+  }, [enabled]);
+
+  return active;
 }
 
 /* ========================================
@@ -447,16 +582,10 @@ class ErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div style={{ textAlign: 'center', padding: '4rem 2rem', maxWidth: 480, margin: '0 auto' }}>
-          <h2 style={{ fontFamily: 'Outfit, sans-serif', marginBottom: '1rem' }}>Something went wrong</h2>
-          <p style={{ color: '#5f6368', marginBottom: '1.5rem' }}>
-            We are sorry for the inconvenience. Please try refreshing the page.
-          </p>
-          <button
-            className="primary-btn"
-            onClick={() => window.location.reload()}
-            style={{ cursor: 'pointer' }}
-          >
+        <div className="error-state">
+          <h2>Something went wrong</h2>
+          <p>We are sorry for the inconvenience. Please try refreshing the page.</p>
+          <button className="btn btn-primary" type="button" onClick={() => window.location.reload()}>
             Refresh page
           </button>
         </div>
@@ -467,70 +596,11 @@ class ErrorBoundary extends React.Component {
 }
 
 /* ========================================
-   Routing Helper
-   ======================================== */
-function getHashRoute() {
-  return window.location.hash.replace(/^#\/?/, '');
-}
-
-function Preloader({ isFadingOut }) {
-  const brandLetters = "BHARATH SURGICAL".split("");
-
-  return (
-    <div className={`preloader-overlay ${isFadingOut ? 'fade-out' : ''}`}>
-      <div className="preloader-spinner-container">
-        <div className="preloader-spinner"></div>
-        <div className="preloader-spinner-inner"></div>
-        <div className="preloader-logo-pulse">
-          <img src={`${assets}logo.jpg`} alt="Bharath Surgical Logo" />
-        </div>
-      </div>
-      <div className="preloader-brand-name">
-        <h1 className="preloader-title">
-          {brandLetters.map((char, index) => (
-            <span
-              key={index}
-              style={{
-                animationDelay: `${index * 0.04}s`,
-                marginRight: char === " " ? "8px" : "0"
-              }}
-            >
-              {char}
-            </span>
-          ))}
-        </h1>
-        <p className="preloader-subtitle">Dressing Company</p>
-      </div>
-    </div>
-  );
-}
-
-/* ========================================
-   App Component
+   App
    ======================================== */
 function App() {
   const [route, setRoute] = useState(getHashRoute());
-  const [isLoading, setIsLoading] = useState(true);
-  const [isFadingOut, setIsFadingOut] = useState(false);
   const isInitialRoute = useRef(true);
-  const phonePrimary = '919443157402';
-  const whatsappMessage = encodeURIComponent(
-    'Hello Bharath Surgical Dressing Company, I want to enquire about your surgical dressing products.'
-  );
-
-  useEffect(() => {
-    // Premium loading sequence
-    const loadTimer = setTimeout(() => {
-      setIsFadingOut(true);
-      const exitTimer = setTimeout(() => {
-        setIsLoading(false);
-        document.body.classList.add('app-ready');
-      }, 900); // matches slide-up clip path duration
-      return () => clearTimeout(exitTimer);
-    }, 1800);
-
-    return () => clearTimeout(loadTimer);
-  }, []);
 
   useEffect(() => {
     const onHashChange = () => setRoute(getHashRoute());
@@ -541,138 +611,71 @@ function App() {
   useEffect(() => {
     if (isInitialRoute.current) {
       isInitialRoute.current = false;
-      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
       return;
     }
 
     if (route.startsWith('product/')) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: 'instant' });
       return;
     }
-    const target = document.getElementById(route || 'home');
-    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    scrollToRoute(route);
   }, [route]);
 
   const selectedProduct = useMemo(() => {
     const slug = route.startsWith('product/') ? route.replace('product/', '') : '';
-    return products.find((product) => product.slug === slug);
+    // Links shared before the gauze swabs were split into two products still open a page.
+    const currentSlug = slug === 'gauze-swabs-sterile-non-sterile' ? 'gauze-swabs-sterile' : slug;
+    return products.find((product) => product.slug === currentSlug);
   }, [route]);
+
+  const enquiryHref = whatsappLink(selectedProduct?.name);
 
   return (
     <>
-      {isLoading && <Preloader isFadingOut={isFadingOut} />}
-      <div className="app-content-wrapper">
-        {/* Skip to content link for keyboard accessibility */}
-        <a className="skip-link" href="#main-content">Skip to main content</a>
-        <Header phonePrimary={phonePrimary} whatsappMessage={whatsappMessage} currentRoute={route} />
-        {selectedProduct ? (
-          <ProductDetail product={selectedProduct} phonePrimary={phonePrimary} />
-        ) : (
-          <Home phonePrimary={phonePrimary} whatsappMessage={whatsappMessage} />
-        )}
-        <Footer />
-        <WhatsAppFAB phonePrimary={phonePrimary} whatsappMessage={whatsappMessage} />
-        <ScrollToTop />
-        <ScrollProgress />
-      </div>
+      <a className="skip-link" href="#/main-content">Skip to main content</a>
+      <TopBar />
+      <Header enquiryHref={enquiryHref} isProductPage={Boolean(selectedProduct)} route={route} />
+      {selectedProduct ? (
+        <ProductDetail product={selectedProduct} enquiryHref={enquiryHref} />
+      ) : (
+        <Home enquiryHref={enquiryHref} />
+      )}
+      <Footer />
+      <WhatsAppFAB href={enquiryHref} />
+      <ScrollToTop />
     </>
   );
 }
 
 /* ========================================
-   WhatsApp Floating Action Button
+   Top bar and header
    ======================================== */
-function WhatsAppFAB({ phonePrimary, whatsappMessage }) {
+function TopBar() {
   return (
-    <a
-      className="whatsapp-fab"
-      href={`https://wa.me/${phonePrimary}?text=${whatsappMessage}`}
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label="Send WhatsApp enquiry"
-    >
-      <WhatsAppIcon size={24} />
-      <span className="whatsapp-fab-label">Enquire now</span>
-    </a>
+    <div className="topbar">
+      <div className="shell topbar-inner">
+        <span>Since 1974 &middot; Rajapalayam, Tamil Nadu, India</span>
+        <div className="topbar-links">
+          <a href={`tel:${phones[0].tel}`}><PhoneIcon size={14} /> {phones[0].display}</a>
+          <a href={`mailto:${emails[0]}`}><MailIcon size={14} /> {emails[0]}</a>
+        </div>
+      </div>
+    </div>
   );
 }
 
-/* ========================================
-   Scroll to Top Button
-   ======================================== */
-function ScrollToTop() {
-  const isScrolled = useScrollPosition(400);
-
-  const scrollToTop = useCallback(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, []);
-
-  return (
-    <button
-      className={`scroll-top-btn ${isScrolled ? 'visible' : ''}`}
-      onClick={scrollToTop}
-      aria-label="Scroll to top"
-      type="button"
-    >
-      <ArrowUpIcon />
-    </button>
-  );
-}
-
-/* ========================================
-   Scroll Progress Bar
-   ======================================== */
-function ScrollProgress() {
-  const [progress, setProgress] = useState(0);
-
-  useEffect(() => {
-    let ticking = false;
-    const onScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          const scrollTop = window.scrollY;
-          const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-          const scrolled = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-          setProgress(scrolled);
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
-  return (
-    <div
-      className="scroll-progress"
-      style={{ width: `${progress}%` }}
-      role="progressbar"
-      aria-valuenow={Math.round(progress)}
-      aria-valuemin={0}
-      aria-valuemax={100}
-      aria-label="Page scroll progress"
-    />
-  );
-}
-
-/* ========================================
-   Header
-   ======================================== */
-function Header({ phonePrimary, whatsappMessage, currentRoute }) {
+function Header({ enquiryHref, isProductPage, route }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const activeSection = useActiveSection(!isProductPage);
+  const activeRoute = isProductPage ? 'products' : activeSection;
+  const isScrolled = useScrolledPast(8);
 
   useEffect(() => {
     setMenuOpen(false);
-  }, [currentRoute]);
+  }, [route]);
 
-  // Lock body scroll when mobile menu is open
   useEffect(() => {
-    if (menuOpen) {
-      document.body.classList.add('menu-locked');
-    } else {
-      document.body.classList.remove('menu-locked');
-    }
+    document.body.classList.toggle('menu-locked', menuOpen);
     return () => document.body.classList.remove('menu-locked');
   }, [menuOpen]);
 
@@ -685,55 +688,108 @@ function Header({ phonePrimary, whatsappMessage, currentRoute }) {
   }, []);
 
   return (
-    <header className={`site-header${menuOpen ? ' menu-open' : ''}`}>
-      <a className="brand" href="#/" aria-label="Bharath Surgical home" onClick={() => setMenuOpen(false)}>
-        <img src={`${assets}logo.jpg`} alt="Bharath Surgical logo" width="52" height="52" />
-        <span>
-          <strong>Bharath Surgical</strong>
-          <small>Dressing Company</small>
-        </span>
-      </a>
-      <nav
-        id="mobile-navigation"
-        className={`primary-nav${menuOpen ? ' open' : ''}`}
-        aria-label="Primary navigation"
-        onClick={() => setMenuOpen(false)}
-      >
-        <a href="#/products" className={currentRoute === 'products' ? 'active-nav' : ''} aria-current={currentRoute === 'products' ? 'page' : undefined}>Products</a>
-        <a href="#/about" classNamel={currentRoute === 'about' ? 'active-nav' : ''} aria-current={currentRoute === 'about' ? 'page' : undefined}>About</a>
-        <a href="#/government" className={currentRoute === 'government' ? 'active-nav' : ''} aria-current={currentRoute === 'government' ? 'page' : undefined}>Government Orders</a>
-        <a href="#/quality" className={currentRoute === 'quality' ? 'active-nav' : ''} aria-current={currentRoute === 'quality' ? 'page' : undefined}>Quality</a>
-        <a href="#/contact" className={currentRoute === 'contact' ? 'active-nav' : ''} aria-current={currentRoute === 'contact' ? 'page' : undefined}>Contact</a>
-      </nav>
-      <div className="header-actions">
-        <a className="header-cta" href={`https://wa.me/${phonePrimary}?text=${whatsappMessage}`} target="_blank" rel="noopener noreferrer">
-          Enquire now
-        </a>
-        <button
-          className="menu-toggle"
-          type="button"
-          aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
-          aria-expanded={menuOpen}
-          aria-controls="mobile-navigation"
-          onClick={() => setMenuOpen((open) => !open)}
-        >
-          <span />
-          <span />
-          <span />
-        </button>
-      </div>
-    </header>
+    <>
+      <header className={`site-header${isScrolled ? ' is-scrolled' : ''}`}>
+        <div className="shell header-inner">
+          <a
+            className="brand"
+            href="#/"
+            aria-label="Bharath Surgical home"
+            onClick={(event) => { setMenuOpen(false); rescrollIfCurrent(event); }}
+          >
+            <img src={`${assets}logo.jpg`} alt="" width="350" height="250" />
+            <span>
+              <strong>Bharath Surgical</strong>
+              <small>Dressing Company</small>
+            </span>
+          </a>
+          <nav
+            id="primary-navigation"
+            className={`primary-nav${menuOpen ? ' open' : ''}`}
+            aria-label="Primary navigation"
+            onClick={(event) => { setMenuOpen(false); rescrollIfCurrent(event); }}
+          >
+            {navItems.map((item) => (
+              <a
+                key={item.route}
+                href={`#/${item.route}`}
+                className={activeRoute === item.route ? 'active' : ''}
+                aria-current={activeRoute === item.route ? 'true' : undefined}
+              >
+                {item.label}
+              </a>
+            ))}
+          </nav>
+          <div className="header-actions">
+            <a className="btn btn-primary header-cta" href={enquiryHref} target="_blank" rel="noopener noreferrer">
+              Enquire now
+            </a>
+            <button
+              className={`menu-toggle${menuOpen ? ' open' : ''}`}
+              type="button"
+              aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+              aria-expanded={menuOpen}
+              aria-controls="primary-navigation"
+              onClick={() => setMenuOpen((open) => !open)}
+            >
+              <span />
+              <span />
+              <span />
+            </button>
+          </div>
+        </div>
+      </header>
+      {menuOpen && <div className="nav-scrim" onClick={() => setMenuOpen(false)} />}
+    </>
   );
 }
 
 /* ========================================
-   Home Page
+   Shared layout pieces
    ======================================== */
-function Home({ phonePrimary, whatsappMessage }) {
+function Section({ id, className = '', children }) {
+  const [ref, isVisible] = useReveal();
+
+  return (
+    <section ref={ref} id={id} className={`band ${className}`}>
+      <div className={`shell reveal${isVisible ? ' is-visible' : ''}`}>{children}</div>
+    </section>
+  );
+}
+
+function SectionHeading({ eyebrow, title, lead }) {
+  return (
+    <div className="section-heading stagger">
+      <p className="eyebrow">{eyebrow}</p>
+      <h2>{title}</h2>
+      {lead && <p className="lead">{lead}</p>}
+    </div>
+  );
+}
+
+/* ========================================
+   Home page
+   ======================================== */
+function Home({ enquiryHref }) {
   return (
     <main id="main-content" className="page-enter" key="home">
-      <section className="hero section-shell" id="home">
-        <div className="hero-copy">
+      <Hero />
+      <ProductsSection />
+      <AboutSection />
+      <GovernmentSection />
+      <QualitySection />
+      <FaqSection />
+      <Contact enquiryHref={enquiryHref} />
+    </main>
+  );
+}
+
+function Hero() {
+  return (
+    <section className="hero" id="home">
+      <div className="hero-inner">
+        <div className="hero-copy stagger">
+          <p className="eyebrow">Manufacturer &middot; Supplier &middot; Exporter</p>
           <h1>Premium Surgical Bandages &amp; Dressings Manufacturer</h1>
           <p className="hero-text">
             ISO-certified surgical dressing materials manufactured in Rajapalayam, India. Trusted
@@ -741,38 +797,166 @@ function Home({ phonePrimary, whatsappMessage }) {
             export-grade standards.
           </p>
           <div className="hero-actions">
-            <a className="primary-btn" href="#/products">View all products</a>
-            <a className="secondary-btn" href="#/contact">Contact sales</a>
+            <a className="btn btn-primary btn-lg" href="#/products">
+              View all products <ArrowRightIcon />
+            </a>
+            <a className="btn btn-outline btn-lg" href="#/contact">Contact sales</a>
           </div>
-          <div className="trust-row" aria-label="Company highlights">
-            <span>ISO 13485 focused</span>
-            <span>MSE registered</span>
-            <span>Government supply</span>
-            <span>Private labelling</span>
-          </div>
+          <ul className="trust-list" aria-label="Company highlights">
+            {['ISO 13485 focused', 'MSE registered', 'Government supply', 'Private labelling'].map((item) => (
+              <li key={item}><CheckIcon size={15} /> {item}</li>
+            ))}
+          </ul>
         </div>
-        <div className="hero-card full-doctor-card">
-          <img src={`${assets}hero-doctor-full.jpg`} alt="Doctors in a surgical operation theatre" width="600" height="450" />
-          <div className="floating-badge">
-            <strong>50+ years</strong>
-            <span>Quality care with a human touch</span>
-          </div>
+        <div className="hero-media">
+          <img
+            src={`${assets}hero-surgery.jpg`}
+            alt="Surgical team in blue gowns operating in a theatre"
+            width="1146"
+            height="640"
+            fetchPriority="high"
+          />
         </div>
-      </section>
+      </div>
+      <div className="shell">
+        <dl className="stat-strip stagger">
+          {stats.map((stat) => (
+            <div key={stat.label}>
+              <dt>{stat.label}</dt>
+              <dd><CountUp value={stat.value} /></dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </section>
+  );
+}
 
-      <AnimatedSection className="section-shell intro-grid" id="about">
-        <div className="intro-certifications">
-          <CertificationMarks />
+/* ========================================
+   Products
+   ======================================== */
+function ProductCard({ product, index = 0 }) {
+  const [ref, isVisible] = useReveal();
+
+  return (
+    <a
+      ref={ref}
+      className={`product-card reveal-item${isVisible ? ' is-visible' : ''}`}
+      style={{ '--delay': `${(index % 4) * 70}ms` }}
+      href={`#/product/${product.slug}`}
+    >
+      <div className="product-image">
+        <img src={`${assets}${product.image}?v=3`} alt="" width="1024" height="1024" loading="lazy" decoding="async" />
+      </div>
+      <div className="product-body">
+        <span className="product-category">{categoryBySlug[product.slug]}</span>
+        <h3>{displayName(product.name)}</h3>
+        <p className="product-summary">{product.summary}</p>
+        <span className="product-link">View details <ArrowRightIcon size={15} /></span>
+      </div>
+    </a>
+  );
+}
+
+function ProductsSection() {
+  const [search, setSearch] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState(categories[0]);
+
+  const filteredProducts = useMemo(() => {
+    const query = search.trim().toLowerCase();
+    return products.filter((product) => {
+      const matchesSearch =
+        product.name.toLowerCase().includes(query) || product.summary.toLowerCase().includes(query);
+      const matchesCategory =
+        selectedCategory === categories[0] || categoryBySlug[product.slug] === selectedCategory;
+      return matchesSearch && matchesCategory;
+    });
+  }, [search, selectedCategory]);
+
+  const countFor = (category) =>
+    category === categories[0]
+      ? products.length
+      : products.filter((product) => categoryBySlug[product.slug] === category).length;
+
+  return (
+    <Section id="products" className="band-tint">
+      <div className="products-head">
+        <SectionHeading
+          eyebrow="Our products"
+          title="Complete brochure product range"
+          lead="Search below or select a category to view specifications and gallery."
+        />
+        <div className="search-box" role="search">
+          <SearchIcon size={18} />
+          <input
+            type="search"
+            placeholder="Search gauze, cotton, gown..."
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            aria-label="Search products"
+          />
+          {search && (
+            <button type="button" onClick={() => setSearch('')} aria-label="Clear search">&times;</button>
+          )}
         </div>
-        <div className="intro-card">
+      </div>
+
+      <div className="filter-row" role="group" aria-label="Filter products by category">
+        {categories.map((category) => (
+          <button
+            key={category}
+            type="button"
+            className={`filter-chip${selectedCategory === category ? ' active' : ''}`}
+            aria-pressed={selectedCategory === category}
+            onClick={() => setSelectedCategory(category)}
+          >
+            {category} <span>{countFor(category)}</span>
+          </button>
+        ))}
+      </div>
+
+      <p className="visually-hidden" aria-live="polite">
+        Showing {filteredProducts.length} of {products.length} products
+      </p>
+
+      {filteredProducts.length > 0 ? (
+        // Keyed by category so the cards animate in again when the filter changes.
+        <div className="product-grid" key={selectedCategory}>
+          {filteredProducts.map((product, index) => (
+            <ProductCard product={product} index={index} key={product.slug} />
+          ))}
+        </div>
+      ) : (
+        <div className="empty-state">
+          <p>No products found matching "<strong>{search}</strong>" in <strong>{selectedCategory}</strong>.</p>
+          <button
+            className="btn btn-outline"
+            type="button"
+            onClick={() => { setSearch(''); setSelectedCategory(categories[0]); }}
+          >
+            Clear filters
+          </button>
+        </div>
+      )}
+    </Section>
+  );
+}
+
+/* ========================================
+   About
+   ======================================== */
+function AboutSection() {
+  return (
+    <Section id="about">
+      <div className="about-grid">
+        <div className="about-copy stagger">
+          <p className="eyebrow">About the company</p>
           <h2>Our Mission and Vision</h2>
           <p>
             Bharath Surgical Dressing Company is a trusted manufacturer, supplier and exporter of
             surgical dressings and bandages, dedicated to delivering dependable, high-quality
             products that support safe patient care in healthcare settings worldwide.
           </p>
-        </div>
-        <div className="intro-card">
           <h2>Quality You Can Trust</h2>
           <p>
             We use carefully selected materials and controlled manufacturing processes to produce
@@ -780,83 +964,66 @@ function Home({ phonePrimary, whatsappMessage }) {
             consistency and compliance for hospitals, clinics and distributors.
           </p>
         </div>
-      </AnimatedSection>
-
-      <GovernmentOrdersSection />
-      <ProductsSection />
-      <QualitySection />
-      <FaqSection />
-      <Contact phonePrimary={phonePrimary} whatsappMessage={whatsappMessage} />
-    </main>
-  );
-}
-
-/* ========================================
-   Animated Section Wrapper
-   ======================================== */
-function AnimatedSection({ children, className = '', id, ...props }) {
-  const [ref, isVisible] = useIntersectionObserver();
-
-  return (
-    <section
-      ref={ref}
-      className={`animate-on-scroll ${isVisible ? 'visible' : ''} ${className}`}
-      id={id}
-      {...props}
-    >
-      {children}
-    </section>
-  );
-}
-
-/* ========================================
-   Government Orders Section
-   ======================================== */
-function GovernmentOrdersSection() {
-  const [ref, isVisible] = useIntersectionObserver();
-
-  return (
-    <section ref={ref} className={`government section-shell animate-on-scroll ${isVisible ? 'visible' : ''}`} id="government">
-      <div className="section-heading centered">
-        <p className="eyebrow">Government supply & Exports</p>
-        <h2>Supplying surgical dressing materials to government buyers & global markets.</h2>
-        <p>
-          Bharath Surgical Dressing Company has supplied surgical dressing products to government
-          requirements across these states and has been exporting globally.
-        </p>
+        <aside className="cert-panel">
+          <h3>Certifications &amp; Compliance</h3>
+          <CertificationList />
+        </aside>
       </div>
+    </Section>
+  );
+}
 
-      <div className="government-panel">
-        <div className="government-state-grid">
+const CertificationList = memo(function CertificationList() {
+  return (
+    <ul className="cert-list stagger">
+      {certifications.map((cert) => (
+        <li key={cert.name}>
+          <strong>{cert.name}</strong>
+          <span>{cert.detail}</span>
+        </li>
+      ))}
+    </ul>
+  );
+});
+
+/* ========================================
+   Government supply and exports
+   ======================================== */
+function GovernmentSection() {
+  return (
+    <Section id="government" className="band-tint">
+      <SectionHeading
+        eyebrow="Government supply & exports"
+        title="Supplying surgical dressing materials to government buyers & global markets."
+        lead="Bharath Surgical Dressing Company has supplied surgical dressing products to government requirements in Tamil Nadu and has been exporting globally."
+      />
+      <div className="gov-layout">
+        <div className="state-grid stagger">
           {governmentSupplyStates.map((state) => (
-            <article className="government-state-card" key={state.name}>
+            <article className="state-card" key={state.name}>
               <div className="state-logo">
                 <img
                   src={`${assets}${state.logo}`}
                   alt={`${state.name} government supply logo`}
                   loading="lazy"
-                  width="92"
-                  height="92"
+                  width="96"
+                  height="96"
                 />
               </div>
               <div>
-                <span className="summary-label">Government Supply</span>
                 <h3>{state.name}</h3>
+                <span>Government supply</span>
               </div>
             </article>
           ))}
         </div>
-
-        {/* Export Banner */}
-        <div className="export-banner">
-          <div className="export-badge-container">
-            <span className="export-badge">Gulf Export Partner</span>
-            <div className="export-years-badge">
-              <strong>25+</strong>
-              <span>Years of trust</span>
-            </div>
+        <div className="export-panel">
+          <div className="export-years">
+            <strong><CountUp value="25+" /></strong>
+            <span>Years of trust</span>
           </div>
-          <div className="export-content">
+          <div>
+            <p className="export-tag"><GlobeIcon size={15} /> Gulf export partner</p>
             <h3>Exporting Premium Surgical Dressings to Gulf Countries</h3>
             <p>
               For over 25 years, we have been a trusted exporter of high-grade surgical dressings,
@@ -864,483 +1031,291 @@ function GovernmentOrdersSection() {
               Our products are packaged to withstand transport and meet international standards.
             </p>
           </div>
-          <div className="export-icon-container">
-            <GlobeIcon size={40} />
-          </div>
         </div>
       </div>
-    </section>
+    </Section>
   );
 }
 
-function ProductsSection() {
-  const [search, setSearch] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All Products');
-  const [ref, isVisible] = useIntersectionObserver();
-  const gridRef = useRef(null);
-  const [gridAnimated, setGridAnimated] = useState(false);
+/* ========================================
+   Quality
+   ======================================== */
+const qualityPoints = [
+  { icon: ShieldIcon, title: 'Uncompromised quality', text: 'Strict quality control at every stage of production.' },
+  { icon: TruckIcon, title: 'Timely delivery', text: 'Efficient production planning and logistics for urgent healthcare demands.' },
+  { icon: TagIcon, title: 'Custom manufacturing', text: 'Private labelling and product customization to meet unique client needs.' },
+  { icon: GlobeIcon, title: 'Global reach', text: 'Trusted by partners across healthcare and distribution markets.' },
+];
 
-  const categories = [
-    'All Products',
-    'Gauze & Bandage',
-    'Surgical Cotton',
-    'Hospital Wear & Disposables'
-  ];
+function QualitySection() {
+  return (
+    <Section id="quality" className="band-dark">
+      <div className="quality-grid">
+        <SectionHeading eyebrow="Why choose us" title="Built around quality, speed and flexibility." />
+        <div className="quality-list stagger">
+          {qualityPoints.map(({ icon: PointIcon, title, text }) => (
+            <div key={title}>
+              <PointIcon size={24} strokeWidth={1.75} />
+              <h3>{title}</h3>
+              <p>{text}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </Section>
+  );
+}
 
-  const filteredProducts = useMemo(() => {
-    return products.filter((product) => {
-      const matchesSearch =
-        product.name.toLowerCase().includes(search.toLowerCase()) ||
-        product.summary.toLowerCase().includes(search.toLowerCase());
+/* ========================================
+   FAQ
+   ======================================== */
+const faqs = [
+  {
+    question: 'What products do we manufacture?',
+    answer:
+      'We manufacture gauze cloth, bandage cloth, roller bandages, gauze swabs, mopping pads, dressing pads, gamjee rolls, absorbent cotton rolls, gowns and related surgical dressing materials.',
+  },
+  {
+    question: 'Do we supply bulk and custom requirements?',
+    answer:
+      'Yes. Bulk supply, custom sizing, private labelling and packing support are available based on hospital, distributor and tender requirements.',
+  },
+  {
+    question: 'Where are we located?',
+    answer:
+      'We are located at Chatrapatti, Rajapalayam, Tamil Nadu, a well-known manufacturing cluster for surgical dressing materials.',
+  },
+  {
+    question: 'Do we supply to government requirements?',
+    answer:
+      'Yes. We have supplied surgical dressing materials for government requirements in Tamil Nadu.',
+  },
+];
 
-      if (!matchesSearch) return false;
-
-      if (selectedCategory === 'All Products') return true;
-      if (selectedCategory === 'Gauze & Bandage') {
-        return [
-          'absorbent-gauze-cloth',
-          'bandage-cloth',
-          'roller-bandage-paper-packing',
-          'individual-roller-bandage',
-          'gauze-swabs-sterile-non-sterile',
-          'gauze-mopping-pad',
-          'gauze-dressing-pad',
-          'gamjee-roll'
-        ].includes(product.slug);
-      }
-      if (selectedCategory === 'Surgical Cotton') {
-        return ['absorbent-cotton-roll', 'cotton-balls'].includes(product.slug);
-      }
-      if (selectedCategory === 'Hospital Wear & Disposables') {
-        return [
-          'patient-gown',
-          'surgeon-doctor-gown',
-          'disposables-bed-sheet-pillow-cover',
-          'dialysis-kit'
-        ].includes(product.slug);
-      }
-      return true;
-    });
-  }, [search, selectedCategory]);
-
-  // Reset category animation state to stagger again when selection changes
-  useEffect(() => {
-    setGridAnimated(false);
-    const animTimeout = setTimeout(() => {
-      setGridAnimated(true);
-    }, 50);
-    return () => clearTimeout(animTimeout);
-  }, [selectedCategory, search]);
-
-  // Animate the product grid when it becomes visible
-  useEffect(() => {
-    const grid = gridRef.current;
-    if (!grid) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setGridAnimated(true);
-          observer.unobserve(grid);
-        }
-      },
-      { threshold: 0.05 }
-    );
-
-    observer.observe(grid);
-    return () => observer.disconnect();
-  }, []);
+function FaqSection() {
+  const [activeIndex, setActiveIndex] = useState(0);
 
   return (
-    <section ref={ref} className={`products section-shell animate-on-scroll ${isVisible ? 'visible' : ''}`} id="products">
-      <div className="section-heading centered">
-        <p className="eyebrow">Our products</p>
-        <h2>Complete brochure product range</h2>
-        <p>Search below or select a category to view specifications and gallery.</p>
-
-        <div className="search-bar-container" role="search" aria-label="Search products">
-          <span className="search-icon"><SearchIcon size={18} /></span>
-          <input
-            type="text"
-            className="google-search-bar"
-            placeholder="Search products (e.g. gauze, cotton, bandage, gown...)"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            aria-label="Search products"
-          />
-          {search && (
-            <button className="clear-search-btn" onClick={() => setSearch('')} aria-label="Clear search">×</button>
-          )}
+    <Section id="faq">
+      <div className="faq-grid">
+        <SectionHeading eyebrow="Buyer information" title="Common questions from hospitals and distributors" />
+        <div className="faq-list stagger">
+          {faqs.map((item, index) => {
+            const isOpen = activeIndex === index;
+            return (
+              <div className={`faq-item${isOpen ? ' open' : ''}`} key={item.question}>
+                <h3>
+                  <button
+                    type="button"
+                    id={`faq-q-${index}`}
+                    aria-expanded={isOpen}
+                    aria-controls={`faq-a-${index}`}
+                    onClick={() => setActiveIndex(isOpen ? null : index)}
+                  >
+                    {item.question}
+                    <PlusIcon size={18} />
+                  </button>
+                </h3>
+                <div className="faq-answer" id={`faq-a-${index}`} role="region" aria-labelledby={`faq-q-${index}`}>
+                  <div><p>{item.answer}</p></div>
+                </div>
+              </div>
+            );
+          })}
         </div>
+      </div>
+    </Section>
+  );
+}
 
-        <div className="product-filters">
-          {categories.map((cat) => (
+/* ========================================
+   Product detail page
+   ======================================== */
+function ProductGallery({ product }) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const touchStart = useRef(null);
+  const count = product.images.length;
+
+  useEffect(() => {
+    setActiveIndex(0);
+  }, [product]);
+
+  const showPrevious = () => setActiveIndex((index) => (index === 0 ? count - 1 : index - 1));
+  const showNext = () => setActiveIndex((index) => (index + 1) % count);
+
+  const handleTouchStart = (event) => {
+    const touch = event.touches[0];
+    touchStart.current = { x: touch.clientX, y: touch.clientY };
+  };
+
+  const handleTouchEnd = (event) => {
+    if (!touchStart.current) return;
+    const touch = event.changedTouches[0];
+    const deltaX = touch.clientX - touchStart.current.x;
+    const deltaY = touch.clientY - touchStart.current.y;
+    touchStart.current = null;
+
+    if (Math.abs(deltaX) < 45 || Math.abs(deltaX) < Math.abs(deltaY)) return;
+    if (deltaX > 0) showPrevious();
+    else showNext();
+  };
+
+  const activeImage = product.images[activeIndex] || product.images[0];
+
+  return (
+    <div className="gallery">
+      <div className="gallery-main" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+        <img
+          key={activeImage}
+          src={`${assets}${activeImage}?v=3`}
+          alt={`${product.name}, photo ${activeIndex + 1} of ${count}`}
+          width="1024"
+          height="1024"
+        />
+        {count > 1 && (
+          <>
+            <button className="gallery-nav prev" type="button" onClick={showPrevious} aria-label="Previous product photo">
+              <ArrowLeftIcon size={20} />
+            </button>
+            <button className="gallery-nav next" type="button" onClick={showNext} aria-label="Next product photo">
+              <ArrowRightIcon size={20} />
+            </button>
+          </>
+        )}
+      </div>
+      {count > 1 && (
+        <div className="gallery-thumbs">
+          {product.images.map((image, index) => (
             <button
-              key={cat}
-              className={`filter-chip ${selectedCategory === cat ? 'active' : ''}`}
-              onClick={() => setSelectedCategory(cat)}
+              key={image}
               type="button"
+              className={index === activeIndex ? 'active' : ''}
+              aria-label={`View ${product.name} photo ${index + 1}`}
+              aria-current={index === activeIndex ? 'true' : undefined}
+              onClick={() => setActiveIndex(index)}
             >
-              {cat}
+              <img src={`${assets}${image}?v=3`} alt="" width="1024" height="1024" />
             </button>
           ))}
         </div>
-      </div>
-
-      {filteredProducts.length > 0 ? (
-        <div ref={gridRef} className={`product-grid ${gridAnimated ? 'animated' : ''}`}>
-          {filteredProducts.map((product) => (
-            <a className="product-card" href={`#/product/${product.slug}`} key={product.slug}>
-              <div className="product-image">
-                <LazyImage src={`${assets}${product.image}?v=3`} alt={product.name} width="1000" height="720" />
-              </div>
-              <div className="product-body">
-                <h3>{product.name}</h3>
-                <p className="product-card-summary">{product.summary}</p>
-              </div>
-            </a>
-          ))}
-        </div>
-      ) : (
-        <div className="search-empty-state">
-          <p>No products found matching "<strong>{search}</strong>" in <strong>{selectedCategory}</strong>.</p>
-          <button className="reset-search-btn" onClick={() => { setSearch(''); setSelectedCategory('All Products'); }}>Clear Filters</button>
-        </div>
       )}
-    </section>
+    </div>
   );
 }
 
-/* ========================================
-   Quality Section
-   ======================================== */
-function QualitySection() {
-  const [ref, isVisible] = useIntersectionObserver();
-
-  return (
-    <section ref={ref} className={`quality section-shell animate-on-scroll ${isVisible ? 'visible' : ''}`} id="quality">
-      <div className="quality-panel">
-        <div>
-          <p className="eyebrow">Why choose us</p>
-          <h2>Built around quality, speed and flexibility.</h2>
-        </div>
-        <div className="quality-list">
-          <div>
-            <h3>Uncompromised quality</h3>
-            <p>Strict quality control at every stage of production.</p>
-          </div>
-          <div>
-            <h3>Timely delivery</h3>
-            <p>Efficient production planning and logistics for urgent healthcare demands.</p>
-          </div>
-          <div>
-            <h3>Custom manufacturing</h3>
-            <p>Private labelling and product customization to meet unique client needs.</p>
-          </div>
-          <div>
-            <h3>Global reach</h3>
-            <p>Trusted by partners across healthcare and distribution markets.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ========================================
-   FAQ Section
-   ======================================== */
-function FaqSection() {
-  const [ref, isVisible] = useIntersectionObserver();
-  const [activeIndex, setActiveIndex] = useState(null);
-
-  const toggleFaq = (index) => {
-    setActiveIndex(activeIndex === index ? null : index);
-  };
-
-  const faqs = [
-    {
-      question: 'What products do we manufacture?',
-      answer:
-        'We manufacture gauze cloth, bandage cloth, roller bandages, gauze swabs, mopping pads, dressing pads, gamjee rolls, absorbent cotton rolls, gowns and related surgical dressing materials.',
-    },
-    {
-      question: 'Do we supply bulk and custom requirements?',
-      answer:
-        'Yes. Bulk supply, custom sizing, private labelling and packing support are available based on hospital, distributor and tender requirements.',
-    },
-    {
-      question: 'Where are we located?',
-      answer:
-        'We are located at Chattarapatti, Rajapalayam, Tamil Nadu, a well-known manufacturing cluster for surgical dressing materials.',
-    },
-    {
-      question: 'Do we supply to government requirements?',
-      answer:
-        'Yes. We have supplied surgical dressing materials for government requirements across Tamil Nadu, Kerala and Karnataka.',
-    },
-  ];
-
-  return (
-    <section ref={ref} className={`faq section-shell animate-on-scroll ${isVisible ? 'visible' : ''}`} id="faq">
-      <div className="section-heading centered">
-        <p className="eyebrow">Buyer information</p>
-        <h2>Common questions from hospitals and distributors</h2>
-      </div>
-      <div className="faq-grid">
-        {faqs.map((item, index) => (
-          <article
-            className={`faq-card ${activeIndex === index ? 'active' : ''}`}
-            key={item.question}
-            onClick={() => toggleFaq(index)}
-          >
-            <div className="faq-header">
-              <h3>{item.question}</h3>
-              <div className="faq-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <line x1="12" y1="5" x2="12" y2="19" />
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
-              </div>
-            </div>
-            <div className="faq-content">
-              <div className="faq-answer-inner">
-                <p>{item.answer}</p>
-              </div>
-            </div>
-          </article>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-/* ========================================
-   Product Detail Page
-   ======================================== */
-function ProductDetail({ product, phonePrimary }) {
-  const [activeImageIndex, setActiveImageIndex] = useState(0);
-  const touchStartRef = useRef(null);
-  const activeImage = product.images[activeImageIndex] || product.images[0];
-  const productMessage = encodeURIComponent(
-    `Hello Bharath Surgical Dressing Company, I want to enquire about ${product.name}.`
-  );
+function ProductDetail({ product, enquiryHref }) {
+  const category = categoryBySlug[product.slug];
 
   useEffect(() => {
-    setActiveImageIndex(0);
+    const previousTitle = document.title;
+    document.title = `${product.name} | Bharath Surgical Dressing Company`;
+    return () => { document.title = previousTitle; };
   }, [product]);
 
-  const showPreviousImage = useCallback(() => {
-    setActiveImageIndex((index) => (index === 0 ? product.images.length - 1 : index - 1));
-  }, [product.images.length]);
-
-  const showNextImage = useCallback(() => {
-    setActiveImageIndex((index) => (index + 1) % product.images.length);
-  }, [product.images.length]);
-
-  useEffect(() => {
-    if (product.images.length <= 1) return undefined;
-
-    const slideTimer = window.setInterval(showNextImage, 3500);
-    return () => window.clearInterval(slideTimer);
-  }, [product.images.length, showNextImage]);
-
-  const handleGalleryTouchStart = (event) => {
-    const touch = event.touches[0];
-    touchStartRef.current = {
-      x: touch.clientX,
-      y: touch.clientY
-    };
-  };
-
-  const handleGalleryTouchEnd = (event) => {
-    if (!touchStartRef.current) return;
-
-    const touch = event.changedTouches[0];
-    const deltaX = touch.clientX - touchStartRef.current.x;
-    const deltaY = touch.clientY - touchStartRef.current.y;
-    touchStartRef.current = null;
-
-    if (Math.abs(deltaX) < 45 || Math.abs(deltaX) < Math.abs(deltaY)) return;
-
-    if (deltaX > 0) {
-      showPreviousImage();
-    } else {
-      showNextImage();
-    }
-  };
+  // Prefer products from the same category when suggesting what to view next.
+  const related = useMemo(() => {
+    const others = products.filter((item) => item.slug !== product.slug);
+    const sameCategory = others.filter((item) => categoryBySlug[item.slug] === category);
+    const otherCategories = others.filter((item) => categoryBySlug[item.slug] !== category);
+    return [...sameCategory, ...otherCategories].slice(0, 4);
+  }, [product, category]);
 
   return (
-    <main className="detail-page page-enter" id="main-content" key={product.slug}>
-      <section className="detail-hero section-shell">
-        <div className="detail-copy">
-          <a className="back-link" href="#/products"><ArrowLeftIcon /> Back to all products</a>
-          <p className="eyebrow">Product detail</p>
-          <h1>{product.name}</h1>
-          <p className="product-desc-text">{product.description}</p>
-          <CertificationMarks />
-          <div className="detail-actions">
-            <a className="primary-btn whatsapp-action" href={`https://wa.me/${phonePrimary}?text=${productMessage}`} target="_blank" rel="noopener noreferrer">
-              <ChatIcon /> WhatsApp enquiry
-            </a>
-            <a className="secondary-btn call-action" href="tel:+919443157402">
-              <PhoneIcon /> Call sales
-            </a>
-          </div>
-        </div>
-        <div className="product-gallery">
-          <div
-            className="detail-image-card"
-            onTouchStart={handleGalleryTouchStart}
-            onTouchEnd={handleGalleryTouchEnd}
-          >
-            <img key={activeImage} src={`${assets}${activeImage}?v=3`} alt={product.name} width="1000" height="720" />
-            {product.images.length > 1 && (
-              <>
-                <button
-                  className="gallery-nav gallery-nav-prev"
-                  type="button"
-                  onClick={showPreviousImage}
-                  aria-label="Previous product photo"
-                >
-                  <ArrowLeftIcon />
-                </button>
-                <button
-                  className="gallery-nav gallery-nav-next"
-                  type="button"
-                  onClick={showNextImage}
-                  aria-label="Next product photo"
-                >
-                  <ArrowLeftIcon />
-                </button>
-              </>
-            )}
-          </div>
-          {product.images.length > 1 && (
-            <div className="gallery-dots" aria-label={`${product.name} photos`}>
-              {product.images.map((image, index) => (
-              <button
-                className={index === activeImageIndex ? 'active' : ''}
-                key={image}
-                type="button"
-                onClick={() => setActiveImageIndex(index)}
-                aria-label={`View ${product.name} photo ${index + 1}`}
-              />
-              ))}
+    <main className="page-enter" id="main-content" key={product.slug}>
+      <section className="detail-hero">
+        <div className="shell">
+          <nav className="breadcrumb" aria-label="Breadcrumb">
+            <a href="#/products"><ArrowLeftIcon size={15} /> All products</a>
+            <span aria-hidden="true">/</span>
+            <span aria-current="page">{displayName(product.name)}</span>
+          </nav>
+          <div className="detail-grid">
+            <ProductGallery product={product} />
+            <div className="detail-copy stagger">
+              <p className="eyebrow">{category}</p>
+              <h1>{displayName(product.name)}</h1>
+              <p className="detail-description">{product.description}</p>
+
+              {product.sizes?.length > 0 && (
+                <div className="detail-block">
+                  <h2>Available sizes</h2>
+                  <ul className="size-list">
+                    {product.sizes.map((size) => <li key={size}>{size}</li>)}
+                  </ul>
+                </div>
+              )}
+
+              <div className="detail-actions">
+                <a className="btn btn-whatsapp btn-lg" href={enquiryHref} target="_blank" rel="noopener noreferrer">
+                  <WhatsAppIcon /> WhatsApp enquiry
+                </a>
+                <a className="btn btn-outline btn-lg" href={`tel:${phones[0].tel}`}>
+                  <PhoneIcon /> Call sales
+                </a>
+              </div>
+
+              <div className="detail-block">
+                <h2>Certifications &amp; Compliance</h2>
+                <CertificationList />
+              </div>
             </div>
-          )}
-        </div>
-      </section>
-
-      {/* Available Sizes Section */}
-      {product.sizes && product.sizes.length > 0 && (
-        <section className="detail-sizes section-shell">
-          <div className="section-heading">
-            <p className="eyebrow">Available Sizes</p>
-            <h2>Size Options</h2>
           </div>
-          <div className="sizes-grid">
-            {product.sizes.map((size) => (
-              <span className="size-chip" key={size}>{size}</span>
-            ))}
+        </div>
+      </section>
+
+      <Section className="band-tint">
+        <div className="spec-grid">
+          <div>
+            <SectionHeading
+              eyebrow="Technical details"
+              title="Product Specifications"
+              lead="Standard manufacturing criteria and parameters. Custom sizes and packaging can be supplied on request."
+            />
+            <div className="spec-table-wrap">
+              <table className="spec-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Parameter</th>
+                    <th scope="col">Standard specification</th>
+                  </tr>
+                </thead>
+                <tbody className="stagger">
+                  {product.specifications?.map((spec) => (
+                    <tr key={spec.label}>
+                      <th scope="row">{spec.label}</th>
+                      <td>{spec.value}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </section>
-      )}
-
-      {/* Specifications Table Section */}
-      <section className="detail-specifications section-shell">
-        <div className="section-heading">
-          <p className="eyebrow">Technical Details</p>
-          <h2>Product Specifications</h2>
-          <p>Standard manufacturing criteria and parameters. Custom sizes and packaging can be supplied on request.</p>
+          <div className="spec-side">
+            <DetailPanel title="Key features" items={product.features} />
+            <DetailPanel title="Common applications" items={product.applications} />
+          </div>
         </div>
-        <div className="spec-table-container">
-          <table className="google-spec-table">
-            <thead>
-              <tr>
-                <th>Parameters</th>
-                <th>Standard Specifications</th>
-              </tr>
-            </thead>
-            <tbody>
-              {product.specifications && product.specifications.map((spec, index) => (
-                <tr key={index}>
-                  <td className="spec-label-col">{spec.label}</td>
-                  <td className="spec-value-col">{spec.value}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
+      </Section>
 
-      <section className="detail-info section-shell">
-        <DetailPanel title="Key features" items={product.features} />
-        <DetailPanel title="Common applications" items={product.applications} />
-      </section>
-
-      <section className="section-shell related-products">
-        <div className="section-heading centered">
-          <p className="eyebrow">Continue browsing</p>
-          <h2>Other products</h2>
+      <Section>
+        <SectionHeading eyebrow="Continue browsing" title="Other products" />
+        <div className="product-grid">
+          {related.map((item, index) => <ProductCard product={item} index={index} key={item.slug} />)}
         </div>
-        <div className="mini-product-row">
-          {products
-            .filter((item) => item.slug !== product.slug)
-            .slice(0, 4)
-            .map((item) => (
-              <a href={`#/product/${item.slug}`} key={item.slug} className="mini-product-card">
-                <img src={`${assets}${item.image}?v=3`} alt={item.name} loading="lazy" width="200" height="140" />
-                <span>{item.name}</span>
-              </a>
-            ))}
-        </div>
-      </section>
+      </Section>
 
-      <Contact phonePrimary={phonePrimary} compact />
+      <Contact enquiryHref={enquiryHref} />
     </main>
   );
 }
 
-/* ========================================
-   Certification Marks (Memoized)
-   ======================================== */
-const CertificationMarks = memo(function CertificationMarks() {
-  return (
-    <div className="certifications" aria-label="Certifications and compliance">
-      <h2>Certifications &amp; Compliance</h2>
-      <div className="certification-list">
-        <div className="certification-mark iso-mark" aria-label="ISO 9001 quality management">
-          <span className="certification-logo">ISO</span>
-          <strong>9001</strong>
-        </div>
-        <div className="certification-mark iso-mark" aria-label="ISO 13485 medical devices quality management">
-          <span className="certification-logo">ISO</span>
-          <strong>13485</strong>
-        </div>
-        <div className="certification-mark letter-mark" aria-label="CE compliance">
-          <span className="certification-logo">CE</span>
-          <strong>Compliance</strong>
-        </div>
-        <div className="certification-mark letter-mark" aria-label="FDA compliance">
-          <span className="certification-logo fda-logo">FDA</span>
-          <strong>Compliance</strong>
-        </div>
-      </div>
-    </div>
-  );
-});
-
-/* ========================================
-   Detail Panel (Memoized)
-   ======================================== */
 const DetailPanel = memo(function DetailPanel({ title, items }) {
   return (
     <article className="detail-panel">
-      <h2>{title}</h2>
-      <ul>
+      <h3>{title}</h3>
+      <ul className="stagger">
         {items.map((item) => (
-          <li key={item}>{item}</li>
+          <li key={item}><CheckIcon size={15} /> {item}</li>
         ))}
       </ul>
     </article>
@@ -1348,81 +1323,152 @@ const DetailPanel = memo(function DetailPanel({ title, items }) {
 });
 
 /* ========================================
-   Contact Section
+   Contact
    ======================================== */
-function Contact({ phonePrimary, whatsappMessage, compact = false }) {
-  const [ref, isVisible] = useIntersectionObserver();
-  const message =
-    whatsappMessage ||
-    encodeURIComponent('Hello Bharath Surgical Dressing Company, I want to enquire about your products.');
-  const mapQuery = encodeURIComponent(
-    'Bharath Surgical Dressing Company, 54/2B, Alangulam Road, Rajapalayam Post, Chattarapatti 626102, Tamil Nadu, India'
-  );
-
+function ContactRow({ icon: RowIcon, label, value, href, external }) {
   return (
-    <section ref={ref} className={`contact section-shell animate-on-scroll ${isVisible ? 'visible' : ''} ${compact ? 'compact-contact' : ''}`} id="contact">
+    <a
+      className="contact-row"
+      href={href}
+      {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+    >
+      <span className="contact-icon"><RowIcon size={18} /></span>
+      <span className="contact-text">
+        <small>{label}</small>
+        <span>{value}</span>
+      </span>
+    </a>
+  );
+}
+
+function Contact({ enquiryHref }) {
+  return (
+    <Section id="contact" className="band-tint">
       <div className="contact-card">
-        <div className="contact-intro">
+        <div className="contact-details">
           <p className="eyebrow">Get in touch</p>
           <h2>Ready to place an enquiry?</h2>
-          <p>
+          <p className="lead">
             Share your product requirement, size, quantity and destination. Our team will help with
             product details, packing and bulk supply options.
           </p>
-          <div className="contact-map">
-            <iframe
-              title="Bharath Surgical Dressing Company location map"
-              src={`https://www.google.com/maps?q=${mapQuery}&output=embed`}
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              allowFullScreen
+          <div className="contact-rows stagger">
+            {phones.map((phone) => (
+              <ContactRow key={phone.tel} icon={PhoneIcon} label="Call" value={phone.display} href={`tel:${phone.tel}`} />
+            ))}
+            {emails.map((email) => (
+              <ContactRow key={email} icon={MailIcon} label="Email" value={email} href={`mailto:${email}`} />
+            ))}
+            <ContactRow icon={GlobeIcon} label="Website" value="www.bharathsurgicals.com" href="https://www.bharathsurgicals.com" external />
+            <ContactRow
+              icon={PinIcon}
+              label="Address"
+              value={address}
+              href={`https://www.google.com/maps/search/?api=1&query=${mapQuery}`}
+              external
             />
           </div>
+          <a className="btn btn-whatsapp btn-lg btn-block" href={enquiryHref} target="_blank" rel="noopener noreferrer">
+            <WhatsAppIcon /> WhatsApp enquiry
+          </a>
         </div>
-        <div className="contact-details">
-          <div className="contact-detail-item">
-            <span>+91 94431 57402</span>
-            <a href="tel:+919443157402">Call</a>
-          </div>
-          <div className="contact-detail-item">
-            <span>+91 96263 51470</span>
-            <a href="tel:+919626351470">Call</a>
-          </div>
-          <div className="contact-detail-item">
-            <span>info@bharathsurgical.in</span>
-            <a href="mailto:info@bharathsurgical.in">Mail</a>
-          </div>
-          <div className="contact-detail-item">
-            <span>bharathgauze1968@gmail.com</span>
-            <a href="mailto:bharathgauze1968@gmail.com">Mail</a>
-          </div>
-          <a className="contact-detail-link" href="https://www.bharathsurgical.in" target="_blank" rel="noopener noreferrer">www.bharathsurgical.in</a>
-          <address>
-            54/2B, Alangulam Road, Rajapalayam Post, Chattarapatti - 626102, Tamil Nadu, India.
-          </address>
+        <div className="contact-map">
+          <iframe
+            title="Bharath Surgical Dressing Company location map"
+            src={`https://www.google.com/maps?q=${mapQuery}&output=embed`}
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            allowFullScreen
+          />
         </div>
-        <a className="primary-btn wide" href={`https://wa.me/${phonePrimary}?text=${message}`} target="_blank" rel="noopener noreferrer">
-          WhatsApp enquiry
-        </a>
       </div>
-    </section>
+    </Section>
   );
 }
 
 /* ========================================
-   Footer (Memoized)
+   Footer
    ======================================== */
 const Footer = memo(function Footer() {
   return (
-    <footer>
-      <span>&copy; Bharath Surgical Dressing Company. All Rights Reserved.</span>
-      <span>Website Designed &amp; Developed by Karuppasamy M &amp; Karthickraja S | Contact: +91 93455 83758 | +91 93602 26758</span>
+    <footer className="site-footer">
+      <div className="shell footer-grid">
+        <div className="footer-brand">
+          <img src={`${assets}logo.jpg`} alt="" width="350" height="250" loading="lazy" />
+          <p>
+            Trusted manufacturer, supplier and exporter of surgical dressings and bandages from
+            Rajapalayam, Tamil Nadu.
+          </p>
+        </div>
+        <div>
+          <h2>Company</h2>
+          <ul>
+            {navItems.map((item) => (
+              <li key={item.route}><a href={`#/${item.route}`} onClick={rescrollIfCurrent}>{item.label}</a></li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <h2>Products</h2>
+          <ul>
+            {products.slice(0, 5).map((product) => (
+              <li key={product.slug}><a href={`#/product/${product.slug}`}>{displayName(product.name)}</a></li>
+            ))}
+            <li><a href="#/products" onClick={rescrollIfCurrent}>View all products</a></li>
+          </ul>
+        </div>
+        <div>
+          <h2>Contact</h2>
+          <ul>
+            {phones.map((phone) => (
+              <li key={phone.tel}><a href={`tel:${phone.tel}`}>{phone.display}</a></li>
+            ))}
+            {emails.map((email) => (
+              <li key={email}><a href={`mailto:${email}`}>{email}</a></li>
+            ))}
+            <li className="footer-address">{address}</li>
+          </ul>
+        </div>
+      </div>
+      <div className="footer-bottom">
+        <div className="shell">
+          <span>&copy; Bharath Surgical Dressing Company. All Rights Reserved.</span>
+          <span>Website Designed &amp; Developed by Karuppasamy M &amp; Karthickraja S | Contact: +91 93455 83758 | +91 93602 26758</span>
+        </div>
+      </div>
     </footer>
   );
 });
 
 /* ========================================
-   Render App with Error Boundary
+   Floating actions
+   ======================================== */
+function WhatsAppFAB({ href }) {
+  return (
+    <a className="whatsapp-fab" href={href} target="_blank" rel="noopener noreferrer" aria-label="Send WhatsApp enquiry">
+      <WhatsAppIcon size={24} />
+      <span>Enquire now</span>
+    </a>
+  );
+}
+
+function ScrollToTop() {
+  const isVisible = useScrolledPast(600);
+
+  return (
+    <button
+      className={`scroll-top${isVisible ? ' visible' : ''}`}
+      type="button"
+      aria-label="Scroll to top"
+      onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+    >
+      <ArrowUpIcon size={20} />
+    </button>
+  );
+}
+
+/* ========================================
+   Render
    ======================================== */
 createRoot(document.getElementById('root')).render(
   <ErrorBoundary>
