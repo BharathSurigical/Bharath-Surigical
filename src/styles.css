@@ -1976,3 +1976,13 @@ p {
     transform: none;
   }
 }
+
+/* Match the bandage cloth pack photo background to the neighboring product cards. */
+.product-image-blue {
+  background: #cbdffc;
+}
+
+.product-image-blue img {
+  mix-blend-mode: multiply;
+}
+
