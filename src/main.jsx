@@ -846,7 +846,7 @@ function ProductCard({ product, index = 0 }) {
       href={`#/product/${product.slug}`}
     >
       <div className={`product-image${product.slug === 'bandage-cloth' ? ' product-image-blue' : ''}`}>
-        <img src={`${assets}${product.image}?v=3`} alt="" width="1024" height="1024" loading="lazy" decoding="async" />
+        <img src={`${assets}${product.image}?v=4`} alt="" width="1024" height="1024" loading="lazy" decoding="async" />
       </div>
       <div className="product-body">
         <span className="product-category">{categoryBySlug[product.slug]}</span>
