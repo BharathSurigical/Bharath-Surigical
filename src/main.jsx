@@ -14,7 +14,8 @@ window.scrollTo(0, 0);
 // Each product's photos live in public/assets/products/<slug>/ as 1.jpg, 2.jpg, ...
 // in gallery order. Products not listed here have 3 photos.
 const photoCounts = {
-  'absorbent-gauze-cloth': 2,
+  'absorbent-cotton-roll': 1,
+  'absorbent-gauze-cloth': 3,
   'bandage-cloth': 1,
   'gauze-dressing-pad': 2,
   'gauze-swabs-sterile': 2,
@@ -360,7 +361,7 @@ const phones = [
   { display: '+91 88386 55774', tel: '+918838655774' },
   { display: '+91 96263 51470', tel: '+919626351470' },
 ];
-const emails = ['info@bharathsurgicals.in', 'bharathgauze1968@gmail.com'];
+const emails = ['bharathgauze1968@gmail.com'];
 const address = '542/15, Alangulam Road, Chatrapatti, Virudhunagar, Tamil Nadu, 626102';
 const mapQuery = encodeURIComponent(
   `${companyName}, ${address}, India`
@@ -654,7 +655,7 @@ function TopBar() {
   return (
     <div className="topbar">
       <div className="shell topbar-inner">
-        <span>Since 1974 &middot; Rajapalayam, Tamil Nadu, India</span>
+        <span>Rajapalayam, Tamil Nadu, India</span>
         <div className="topbar-links">
           <a href={`tel:${phones[0].tel}`}><PhoneIcon size={14} /> {phones[0].display}</a>
           <a href={`mailto:${emails[0]}`}><MailIcon size={14} /> {emails[0]}</a>
@@ -697,7 +698,10 @@ function Header({ enquiryHref, isProductPage, route }) {
             aria-label="Bharath Surgical home"
             onClick={(event) => { setMenuOpen(false); rescrollIfCurrent(event); }}
           >
-            <img src={`${assets}logo.jpg`} alt="" width="350" height="250" />
+            <span className="brand-mark">
+              <img src={`${assets}logo.jpg`} alt="" width="350" height="250" />
+              <small className="brand-since">Since 1974</small>
+            </span>
             <span>
               <strong>Bharath Surgical</strong>
               <small>Dressing Company</small>
@@ -846,7 +850,7 @@ function ProductCard({ product, index = 0 }) {
       href={`#/product/${product.slug}`}
     >
       <div className={`product-image${product.slug === 'bandage-cloth' ? ' product-image-blue' : ''}`}>
-        <img src={`${assets}${product.image}?v=4`} alt="" width="1024" height="1024" loading="lazy" decoding="async" />
+        <img src={`${assets}${product.image}?v=10`} alt="" width="1024" height="1024" loading="lazy" decoding="async" />
       </div>
       <div className="product-body">
         <span className="product-category">{categoryBySlug[product.slug]}</span>
@@ -1167,7 +1171,7 @@ function ProductGallery({ product }) {
       <div className="gallery-main" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
         <img
           key={activeImage}
-          src={`${assets}${activeImage}?v=3`}
+          src={`${assets}${activeImage}?v=11`}
           alt={`${product.name}, photo ${activeIndex + 1} of ${count}`}
           width="1024"
           height="1024"
@@ -1194,7 +1198,7 @@ function ProductGallery({ product }) {
               aria-current={index === activeIndex ? 'true' : undefined}
               onClick={() => setActiveIndex(index)}
             >
-              <img src={`${assets}${image}?v=3`} alt="" width="1024" height="1024" />
+              <img src={`${assets}${image}?v=11`} alt="" width="1024" height="1024" />
             </button>
           ))}
         </div>
@@ -1433,7 +1437,7 @@ const Footer = memo(function Footer() {
       <div className="footer-bottom">
         <div className="shell">
           <span>&copy; Bharath Surgical Dressing Company. All Rights Reserved.</span>
-          <span>Website Designed &amp; Developed by Karuppasamy M &amp; Karthickraja S | Contact: +91 93455 83758 | +91 93602 26758</span>
+          {/* <span>Website Designed &amp; Developed by Karuppasamy M &amp; Karthickraja S | Contact: +91 93455 83758 | +91 93602 26758</span> */}
         </div>
       </div>
     </footer>

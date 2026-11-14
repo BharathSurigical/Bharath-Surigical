@@ -488,6 +488,13 @@ p {
   object-fit: contain;
 }
 
+.brand-mark {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.05rem;
+}
+
 .brand strong,
 .brand small {
   display: block;
@@ -507,6 +514,15 @@ p {
   margin-top: 0.1rem;
   font-size: 0.8125rem;
   color: var(--muted);
+}
+
+.brand .brand-since {
+  color: var(--brand-strong);
+  font-size: 0.5625rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  text-transform: uppercase;
 }
 
 .primary-nav {
@@ -1721,7 +1737,7 @@ p {
     left: 0.5rem;
   }
 
-  .brand small {
+  .brand > span:last-child small {
     display: none;
   }
 }
@@ -1763,7 +1779,7 @@ p {
     display: none;
   }
 
-  .brand small {
+  .brand > span:last-child small {
     display: block;
   }
 
