@@ -14,15 +14,24 @@ window.scrollTo(0, 0);
 // Each product's photos live in public/assets/products/<slug>/ as 1.jpg, 2.jpg, ...
 // in gallery order. Products not listed here have 3 photos.
 const photoCounts = {
-  'absorbent-cotton-roll': 1,
+  'absorbent-cotton-roll': 2,
   'absorbent-gauze-cloth': 3,
-  'bandage-cloth': 1,
+  'bandage-cloth': 3,
   'gauze-dressing-pad': 2,
-  'gauze-swabs-sterile': 2,
+  'gauze-swabs-sterile': 3,
+};
+const photoExtensions = {
+  'ribbon-gauze': 'png',
+  'gauze-4-ply-roll': 'png',
+  'gauze-swabs-sterile': ['jpg', 'jpg', 'png'],
 };
 
 function gallery(slug) {
-  return Array.from({ length: photoCounts[slug] ?? 3 }, (_, i) => `products/${slug}/${i + 1}.jpg`);
+  const extensions = photoExtensions[slug] ?? 'jpg';
+  return Array.from({ length: photoCounts[slug] ?? 3 }, (_, i) => {
+    const extension = Array.isArray(extensions) ? extensions[i] ?? 'jpg' : extensions;
+    return `products/${slug}/${i + 1}.${extension}`;
+  });
 }
 
 const products = [
@@ -194,6 +203,42 @@ const products = [
     ]
   },
   {
+    slug: 'ribbon-gauze',
+    name: 'Ribbon Gauze',
+    summary: 'Soft, absorbent 100% pure cotton ribbon gauze in multiple widths and lengths.',
+    description:
+      'Ribbon Gauze is a soft, absorbent bandage roll made from 100% pure cotton. Available in a range of widths and lengths, it is suitable for wound dressing, securing dressings and general medical use.',
+    sizes: ['1cm', '2.5cm', '5cm', '7.5cm'],
+    features: ['100% pure cotton', 'Soft and absorbent', 'Multiple widths and lengths', 'Convenient roll packing'],
+    applications: ['Wound dressing', 'Securing dressings', 'Clinical and hospital use', 'First-aid supplies'],
+    specifications: [
+      { label: 'Sizes', value: '1 cm, 2.5 cm, 5 cm, 7.5 cm' },
+      { label: 'Lengths', value: '1 m, 2 m, 3 m, 4 m, 5 m' },
+      { label: 'Material', value: '100% pure cotton' },
+      { label: 'Packing', value: '1 roll, 5 rolls, 10 rolls' }
+    ]
+  },
+  {
+    slug: 'gauze-4-ply-roll',
+    name: 'Gauze 4 Ply Roll',
+    summary: 'Bleached white cotton gauze roll available in multiple sizes, ply options and mesh counts.',
+    description:
+      'Gauze 4 Ply Roll is made from 100% cotton and is available in bleached white, sterile and non-sterile options, with or without an X-ray detectable thread. It is used to bandage wounds, absorb exudate, and protect and isolate the wound.',
+    sizes: ['90cm x 100yds', '90cm x 100m', '90cm x 50yds', '90cm x 50m', '90cm x 2000m', 'Custom sizes available'],
+    features: ['100% cotton', 'Bleached white', 'Sterile and non-sterile options', 'With or without X-ray detectable thread'],
+    applications: ['Bandage wounds', 'Absorb wound exudate', 'Protect and isolate wounds'],
+    specifications: [
+      { label: 'Size', value: '90cm x 100yds, 90cm x 100m, 90cm x 50yds, 90cm x 50m, 90cm x 2000m, and other sizes' },
+      { label: 'Ply', value: '4-ply, 2-ply, 1-ply' },
+      { label: 'Mesh', value: '8 threads / 12 x 8 mesh; 12 threads / 19 x 11 mesh; 13 threads / 19 x 15 mesh; 17 threads / 26 x 18 mesh; 20 threads / 30 x 20 mesh; other options' },
+      { label: 'Color', value: 'Bleached white' },
+      { label: 'Material', value: '100% cotton (40s, 32s, 21s, etc.)' },
+      { label: 'Type', value: 'Without X-ray or with X-ray detectable thread' },
+      { label: 'Sterilization', value: 'Sterile or non-sterile' },
+      { label: 'Application', value: 'Used to bandage wounds, absorb exudate, and protect and isolate the wound' }
+    ]
+  },
+  {
     slug: 'absorbent-cotton-roll',
     name: 'Absorbent Cotton Roll',
     summary: 'Soft, fluffy and highly absorbent 100% pure cotton medical roll.',
@@ -327,6 +372,8 @@ const categoryBySlug = {
   'gauze-mopping-pad': 'Gauze & Bandage',
   'gauze-dressing-pad': 'Gauze & Bandage',
   'gamjee-roll': 'Gauze & Bandage',
+  'ribbon-gauze': 'Gauze & Bandage',
+  'gauze-4-ply-roll': 'Gauze & Bandage',
   'absorbent-cotton-roll': 'Surgical Cotton',
   'cotton-balls': 'Surgical Cotton',
   'patient-gown': 'Hospital Wear & Disposables',
@@ -849,7 +896,7 @@ function ProductCard({ product, index = 0 }) {
       style={{ '--delay': `${(index % 4) * 70}ms` }}
       href={`#/product/${product.slug}`}
     >
-      <div className={`product-image${product.slug === 'bandage-cloth' ? ' product-image-blue' : ''}`}>
+      <div className={`product-image${product.slug === 'bandage-cloth' ? ' product-image-blue' : ''}${['ribbon-gauze', 'gauze-4-ply-roll'].includes(product.slug) ? ' product-image-contain' : ''}`}>
         <img src={`${assets}${product.image}?v=10`} alt="" width="1024" height="1024" loading="lazy" decoding="async" />
       </div>
       <div className="product-body">
@@ -1168,7 +1215,7 @@ function ProductGallery({ product }) {
 
   return (
     <div className="gallery">
-      <div className="gallery-main" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+      <div className={`gallery-main${['ribbon-gauze', 'gauze-4-ply-roll'].includes(product.slug) ? ' image-fit-contain' : ''}`} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
         <img
           key={activeImage}
           src={`${assets}${activeImage}?v=11`}
@@ -1193,7 +1240,7 @@ function ProductGallery({ product }) {
             <button
               key={image}
               type="button"
-              className={index === activeIndex ? 'active' : ''}
+              className={`${index === activeIndex ? 'active ' : ''}${['ribbon-gauze', 'gauze-4-ply-roll'].includes(product.slug) ? 'image-fit-contain-thumb' : ''}`.trim()}
               aria-label={`View ${product.name} photo ${index + 1}`}
               aria-current={index === activeIndex ? 'true' : undefined}
               onClick={() => setActiveIndex(index)}

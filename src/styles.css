@@ -852,18 +852,30 @@ p {
 .product-image {
   aspect-ratio: 1;
   overflow: hidden;
-  background: var(--photo);
+  background: #ffffff;
 }
 
 .product-image img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   transition: transform 0.6s var(--ease-out);
 }
 
+.product-image-contain {
+  background: #ffffff;
+}
+
+.product-image-contain img {
+  object-fit: contain;
+}
+
 .product-card:hover .product-image img {
-  transform: scale(1.05);
+  transform: none;
+}
+
+.product-card:hover .product-image-contain img {
+  transform: none;
 }
 
 .product-body {
@@ -1333,7 +1345,7 @@ p {
   position: relative;
   aspect-ratio: 1;
   overflow: hidden;
-  background: var(--photo);
+  background: #ffffff;
   border-radius: var(--radius-lg);
   touch-action: pan-y;
 }
@@ -1341,8 +1353,16 @@ p {
 .gallery-main > img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   animation: photoIn 0.45s var(--ease-out) backwards;
+}
+
+.image-fit-contain {
+  background: #ffffff;
+}
+
+.image-fit-contain > img {
+  object-fit: contain;
 }
 
 .gallery-nav {
@@ -1384,7 +1404,7 @@ p {
 .gallery-thumbs button {
   padding: 0;
   overflow: hidden;
-  background: var(--photo);
+  background: #ffffff;
   border: 2px solid transparent;
   border-radius: var(--radius-sm);
   cursor: pointer;
@@ -1402,7 +1422,12 @@ p {
 .gallery-thumbs img {
   width: 100%;
   aspect-ratio: 1;
-  object-fit: cover;
+  object-fit: contain;
+}
+
+.gallery-thumbs button.image-fit-contain-thumb img {
+  object-fit: contain;
+  background: #ffffff;
 }
 
 .detail-description {
@@ -1995,7 +2020,7 @@ p {
 
 /* Match the bandage cloth pack photo background to the neighboring product cards. */
 .product-image-blue {
-  background: #cbdffc;
+  background: #ffffff;
 }
 
 .product-image-blue img {
