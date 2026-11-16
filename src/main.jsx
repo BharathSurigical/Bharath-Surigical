@@ -23,6 +23,7 @@ const photoCounts = {
 const photoExtensions = {
   'ribbon-gauze': 'png',
   'gauze-4-ply-roll': 'png',
+  'gauze-slitting-roll': 'png',
   'gauze-swabs-sterile': ['jpg', 'jpg', 'png'],
 };
 
@@ -223,19 +224,37 @@ const products = [
     name: 'Gauze 4 Ply Roll',
     summary: 'Bleached white cotton gauze roll available in multiple sizes, ply options and mesh counts.',
     description:
-      'Gauze 4 Ply Roll is made from 100% cotton and is available in bleached white, sterile and non-sterile options, with or without an X-ray detectable thread. It is used to bandage wounds, absorb exudate, and protect and isolate the wound.',
+      'Gauze 4 Ply Roll is made from 100% cotton and is available in bleached white, sterile and non-sterile options, with or without an X-ray detectable thread. It is used to bandage the wound, absorb exudate, and protect and isolate the wound.',
     sizes: ['90cm x 100yds', '90cm x 100m', '90cm x 50yds', '90cm x 50m', '90cm x 2000m', 'Custom sizes available'],
     features: ['100% cotton', 'Bleached white', 'Sterile and non-sterile options', 'With or without X-ray detectable thread'],
     applications: ['Bandage wounds', 'Absorb wound exudate', 'Protect and isolate wounds'],
     specifications: [
-      { label: 'Size', value: '90cm x 100yds, 90cm x 100m, 90cm x 50yds, 90cm x 50m, 90cm x 2000m, and other sizes' },
+      { label: 'Size', value: '90cm x 100yds, 90cm x 100m, 90cm x 50yds, 90cm x 50m, 90cm x 2000m, etc.' },
       { label: 'Ply', value: '4-ply, 2-ply, 1-ply' },
-      { label: 'Mesh', value: '8 threads / 12 x 8 mesh; 12 threads / 19 x 11 mesh; 13 threads / 19 x 15 mesh; 17 threads / 26 x 18 mesh; 20 threads / 30 x 20 mesh; other options' },
+      { label: 'Mesh', value: '12 x 8 mesh, 19 x 11 mesh, 19 x 15 mesh, 26 x 18 mesh, 30 x 20 mesh, etc.' },
       { label: 'Color', value: 'Bleached white' },
       { label: 'Material', value: '100% cotton (40s, 32s, 21s, etc.)' },
       { label: 'Type', value: 'Without X-ray or with X-ray detectable thread' },
       { label: 'Sterilization', value: 'Sterile or non-sterile' },
-      { label: 'Application', value: 'Used to bandage wounds, absorb exudate, and protect and isolate the wound' }
+      { label: 'Application', value: 'Used to bandage the wound, absorb the exudate, and protect and isolate the wound' }
+    ]
+  },
+  {
+    slug: 'gauze-slitting-roll',
+    name: 'Gauze Slitting Roll',
+    summary: 'Bleached white cotton gauze roll in multiple widths, lengths and mesh options.',
+    description:
+      'Gauze Slitting Roll is made from 100% cotton and supplied in bleached white. Available in widths from 10cm to 50cm, lengths from 500m to 1000m, and plain or X-ray detectable options.',
+    sizes: ['10cm to 50cm'],
+    features: ['100% cotton', 'Bleached white', 'Multiple mesh options', 'Plain and X-ray detectable options'],
+    applications: ['Medical gauze and dressing use'],
+    specifications: [
+      { label: 'Sizes', value: '10cm to 50cm' },
+      { label: 'Length', value: '500m to 1000m' },
+      { label: 'Mesh', value: '12 x 8 mesh, 19 x 11 mesh, 19 x 15 mesh, 26 x 18 mesh, 30 x 20 mesh, etc.' },
+      { label: 'Color', value: 'Bleached white' },
+      { label: 'Material', value: '100% cotton (40s, 30s, 20s, etc.)' },
+      { label: 'Type', value: 'Plain or X-ray detectable' }
     ]
   },
   {
@@ -374,6 +393,7 @@ const categoryBySlug = {
   'gamjee-roll': 'Gauze & Bandage',
   'ribbon-gauze': 'Gauze & Bandage',
   'gauze-4-ply-roll': 'Gauze & Bandage',
+  'gauze-slitting-roll': 'Gauze & Bandage',
   'absorbent-cotton-roll': 'Surgical Cotton',
   'cotton-balls': 'Surgical Cotton',
   'patient-gown': 'Hospital Wear & Disposables',
@@ -896,8 +916,8 @@ function ProductCard({ product, index = 0 }) {
       style={{ '--delay': `${(index % 4) * 70}ms` }}
       href={`#/product/${product.slug}`}
     >
-      <div className={`product-image${product.slug === 'bandage-cloth' ? ' product-image-blue' : ''}${['ribbon-gauze', 'gauze-4-ply-roll'].includes(product.slug) ? ' product-image-contain' : ''}`}>
-        <img src={`${assets}${product.image}?v=10`} alt="" width="1024" height="1024" loading="lazy" decoding="async" />
+      <div className={`product-image${['ribbon-gauze', 'gauze-4-ply-roll'].includes(product.slug) ? ' product-image-contain' : ''}`}>
+        <img src={`${assets}${product.image}?v=15`} alt="" width="1024" height="1024" loading="lazy" decoding="async" />
       </div>
       <div className="product-body">
         <span className="product-category">{categoryBySlug[product.slug]}</span>
@@ -1218,7 +1238,7 @@ function ProductGallery({ product }) {
       <div className={`gallery-main${['ribbon-gauze', 'gauze-4-ply-roll'].includes(product.slug) ? ' image-fit-contain' : ''}`} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
         <img
           key={activeImage}
-          src={`${assets}${activeImage}?v=11`}
+          src={`${assets}${activeImage}?v=15`}
           alt={`${product.name}, photo ${activeIndex + 1} of ${count}`}
           width="1024"
           height="1024"
@@ -1245,7 +1265,7 @@ function ProductGallery({ product }) {
               aria-current={index === activeIndex ? 'true' : undefined}
               onClick={() => setActiveIndex(index)}
             >
-              <img src={`${assets}${image}?v=11`} alt="" width="1024" height="1024" />
+              <img src={`${assets}${image}?v=15`} alt="" width="1024" height="1024" />
             </button>
           ))}
         </div>

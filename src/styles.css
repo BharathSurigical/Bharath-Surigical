@@ -852,7 +852,7 @@ p {
 .product-image {
   aspect-ratio: 1;
   overflow: hidden;
-  background: #ffffff;
+  background: #cbdffc;
 }
 
 .product-image img {
@@ -863,7 +863,7 @@ p {
 }
 
 .product-image-contain {
-  background: #ffffff;
+  background: #cbdffc;
 }
 
 .product-image-contain img {
@@ -1345,7 +1345,7 @@ p {
   position: relative;
   aspect-ratio: 1;
   overflow: hidden;
-  background: #ffffff;
+  background: #cbdffc;
   border-radius: var(--radius-lg);
   touch-action: pan-y;
 }
@@ -1358,7 +1358,7 @@ p {
 }
 
 .image-fit-contain {
-  background: #ffffff;
+  background: #cbdffc;
 }
 
 .image-fit-contain > img {
@@ -1404,7 +1404,7 @@ p {
 .gallery-thumbs button {
   padding: 0;
   overflow: hidden;
-  background: #ffffff;
+  background: #cbdffc;
   border: 2px solid transparent;
   border-radius: var(--radius-sm);
   cursor: pointer;
@@ -1427,7 +1427,7 @@ p {
 
 .gallery-thumbs button.image-fit-contain-thumb img {
   object-fit: contain;
-  background: #ffffff;
+  background: #cbdffc;
 }
 
 .detail-description {
@@ -2018,12 +2018,5 @@ p {
   }
 }
 
-/* Match the bandage cloth pack photo background to the neighboring product cards. */
-.product-image-blue {
-  background: #ffffff;
-}
 
-.product-image-blue img {
-  mix-blend-mode: multiply;
-}
 
