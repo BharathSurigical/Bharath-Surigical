@@ -1,8 +1,20 @@
 import React, { useEffect, useMemo, useState, useRef, memo } from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles.css';
+import keralaLogo from './assets/government/kerala.png';
+import andhraLogo from './assets/government/andhra-pradesh.png';
+import gulfExportGraphic from './assets/gulf-compact.png';
 
 const assets = '/assets/';
+const catalogueHref = `${import.meta.env.BASE_URL}downloads/bharath-surgical-premium-catalogue.pdf`;
+
+function CatalogueDownload({ className = '' }) {
+  return (
+    <a className={className} href={catalogueHref} download="Bharath-Surgical-Catalogue.pdf">
+      Download Catalogue <span className="visually-hidden">(PDF, 4.5 MB)</span>
+    </a>
+  );
+}
 
 // Always start a fresh page load at the top instead of restoring an old
 // browser scroll position. In-page navigation still scrolls normally.
@@ -11,8 +23,9 @@ if ('scrollRestoration' in window.history) {
 }
 window.scrollTo(0, 0);
 
-// Each product's photos live in public/assets/products/<slug>/ as 1.jpg, 2.jpg, ...
-// in gallery order. Products not listed here have 3 photos.
+// White-background versions live beside the preserved original photos as
+// 1-white.jpg, 2-white.jpg, ... in gallery order.
+// Products not listed here have 3 photos.
 const photoCounts = {
   'absorbent-cotton-roll': 2,
   'absorbent-gauze-cloth': 3,
@@ -20,19 +33,10 @@ const photoCounts = {
   'gauze-dressing-pad': 2,
   'gauze-swabs-sterile': 3,
 };
-const photoExtensions = {
-  'ribbon-gauze': 'png',
-  'gauze-4-ply-roll': 'png',
-  'gauze-slitting-roll': 'png',
-  'gauze-swabs-sterile': ['jpg', 'jpg', 'png'],
-};
-
 function gallery(slug) {
-  const extensions = photoExtensions[slug] ?? 'jpg';
-  return Array.from({ length: photoCounts[slug] ?? 3 }, (_, i) => {
-    const extension = Array.isArray(extensions) ? extensions[i] ?? 'jpg' : extensions;
-    return `products/${slug}/${i + 1}.${extension}`;
-  });
+  return Array.from({ length: photoCounts[slug] ?? 3 }, (_, i) =>
+    `products/${slug}/${i + 1}-white.jpg`
+  );
 }
 
 const products = [
@@ -375,7 +379,15 @@ const products = [
 const governmentSupplyStates = [
   {
     name: 'Tamil Nadu',
-    logo: 'government/tn.jpg',
+    logo: `${assets}government/tn.jpg`,
+  },
+  {
+    name: 'Kerala',
+    logo: keralaLogo,
+  },
+  {
+    name: 'Andhra Pradesh',
+    logo: andhraLogo,
   },
 ];
 
@@ -872,6 +884,7 @@ function Hero() {
               View all products <ArrowRightIcon />
             </a>
             <a className="btn btn-outline btn-lg" href="#/contact">Contact sales</a>
+            <CatalogueDownload className="btn btn-outline btn-lg" />
           </div>
           <ul className="trust-list" aria-label="Company highlights">
             {['ISO 13485 focused', 'MSE registered', 'Government supply', 'Private labelling'].map((item) => (
@@ -1066,7 +1079,7 @@ function GovernmentSection() {
       <SectionHeading
         eyebrow="Government supply & exports"
         title="Supplying surgical dressing materials to government buyers & global markets."
-        lead="Bharath Surgical Dressing Company has supplied surgical dressing products to government requirements in Tamil Nadu and has been exporting globally."
+        lead="Bharath Surgical Dressing Company has supplied surgical dressing products to government requirements in Tamil Nadu, Kerala and Andhra Pradesh and has been exporting globally."
       />
       <div className="gov-layout">
         <div className="state-grid stagger">
@@ -1074,7 +1087,7 @@ function GovernmentSection() {
             <article className="state-card" key={state.name}>
               <div className="state-logo">
                 <img
-                  src={`${assets}${state.logo}`}
+                  src={state.logo}
                   alt={`${state.name} government supply logo`}
                   loading="lazy"
                   width="96"
@@ -1089,9 +1102,20 @@ function GovernmentSection() {
           ))}
         </div>
         <div className="export-panel">
+          <div className="export-details">
+          <div className="export-trust">
+            <img
+              className="export-graphic"
+              src={gulfExportGraphic}
+              alt="Six Gulf country flags surrounding a GCC-style emblem"
+              width="768"
+              height="768"
+              loading="lazy"
+            />
           <div className="export-years">
             <strong><CountUp value="25+" /></strong>
             <span>Years of trust</span>
+          </div>
           </div>
           <div>
             <p className="export-tag"><GlobeIcon size={15} /> Gulf export partner</p>
@@ -1101,6 +1125,7 @@ function GovernmentSection() {
               gauze fabric, and medical disposables to healthcare partners across the Middle East.
               Our products are packaged to withstand transport and meet international standards.
             </p>
+          </div>
           </div>
         </div>
       </div>
@@ -1159,7 +1184,7 @@ const faqs = [
   {
     question: 'Do we supply to government requirements?',
     answer:
-      'Yes. We have supplied surgical dressing materials for government requirements in Tamil Nadu.',
+      'Yes. We have supplied surgical dressing materials for government requirements in Tamil Nadu, Kerala and Andhra Pradesh.',
   },
 ];
 
@@ -1486,6 +1511,7 @@ const Footer = memo(function Footer() {
               <li key={product.slug}><a href={`#/product/${product.slug}`}>{displayName(product.name)}</a></li>
             ))}
             <li><a href="#/products" onClick={rescrollIfCurrent}>View all products</a></li>
+            <li><CatalogueDownload /></li>
           </ul>
         </div>
         <div>

@@ -1,0 +1,191 @@
+{
+  "mode": "Built-in image_gen",
+  "prompt": "Use case: precise-object-edit. Input image is the edit target, an existing catalog product photo. Change ONLY the background outside the original product to pure uniform white #FFFFFF, including all outer edges and corners. Preserve the same product, number of items, pose, framing, material texture, folds, packaging, logo, and every printed word verbatim. Do not redesign, replace, recolor, reshape or beautify the product. Keep delicate edges and only a subtle neutral contact shadow. Output one edited photograph, no borders or added text.",
+  "notes": "Background-only edits based on the original product photographs. PNG masters are in output/imagegen/product-white/<slug>/. Web JPEG copies use quality 92 and unchanged dimensions. All original product assets are preserved.",
+  "assets": [
+    {
+      "original": "public/assets/products/absorbent-gauze-cloth/1.jpg",
+      "web": "public/assets/products/absorbent-gauze-cloth/1-white.jpg"
+    },
+    {
+      "original": "public/assets/products/absorbent-gauze-cloth/2.jpg",
+      "web": "public/assets/products/absorbent-gauze-cloth/2-white.jpg"
+    },
+    {
+      "original": "public/assets/products/bandage-cloth/2.jpg",
+      "web": "public/assets/products/bandage-cloth/2-white.jpg"
+    },
+    {
+      "original": "public/assets/products/absorbent-gauze-cloth/3.jpg",
+      "web": "public/assets/products/absorbent-gauze-cloth/3-white.jpg"
+    },
+    {
+      "original": "public/assets/products/bandage-cloth/3.jpg",
+      "web": "public/assets/products/bandage-cloth/3-white.jpg"
+    },
+    {
+      "original": "public/assets/products/bandage-cloth/1.jpg",
+      "web": "public/assets/products/bandage-cloth/1-white.jpg"
+    },
+    {
+      "original": "public/assets/products/roller-bandage-paper-packing/1.jpg",
+      "web": "public/assets/products/roller-bandage-paper-packing/1-white.jpg"
+    },
+    {
+      "original": "public/assets/products/roller-bandage-paper-packing/2.jpg",
+      "web": "public/assets/products/roller-bandage-paper-packing/2-white.jpg"
+    },
+    {
+      "original": "public/assets/products/roller-bandage-paper-packing/3.jpg",
+      "web": "public/assets/products/roller-bandage-paper-packing/3-white.jpg"
+    },
+    {
+      "original": "public/assets/products/gauze-swabs-sterile/1.jpg",
+      "web": "public/assets/products/gauze-swabs-sterile/1-white.jpg"
+    },
+    {
+      "original": "public/assets/products/gauze-swabs-sterile/2.jpg",
+      "web": "public/assets/products/gauze-swabs-sterile/2-white.jpg"
+    },
+    {
+      "original": "public/assets/products/gauze-swabs-sterile/3.png",
+      "web": "public/assets/products/gauze-swabs-sterile/3-white.jpg"
+    },
+    {
+      "original": "public/assets/products/gauze-swabs-non-sterile/1.jpg",
+      "web": "public/assets/products/gauze-swabs-non-sterile/1-white.jpg"
+    },
+    {
+      "original": "public/assets/products/gauze-swabs-non-sterile/2.jpg",
+      "web": "public/assets/products/gauze-swabs-non-sterile/2-white.jpg"
+    },
+    {
+      "original": "public/assets/products/gauze-swabs-non-sterile/3.jpg",
+      "web": "public/assets/products/gauze-swabs-non-sterile/3-white.jpg"
+    },
+    {
+      "original": "public/assets/products/gauze-mopping-pad/1.jpg",
+      "web": "public/assets/products/gauze-mopping-pad/1-white.jpg"
+    },
+    {
+      "original": "public/assets/products/gauze-mopping-pad/2.jpg",
+      "web": "public/assets/products/gauze-mopping-pad/2-white.jpg"
+    },
+    {
+      "original": "public/assets/products/gauze-mopping-pad/3.jpg",
+      "web": "public/assets/products/gauze-mopping-pad/3-white.jpg"
+    },
+    {
+      "original": "public/assets/products/gauze-dressing-pad/1.jpg",
+      "web": "public/assets/products/gauze-dressing-pad/1-white.jpg"
+    },
+    {
+      "original": "public/assets/products/gauze-dressing-pad/2.jpg",
+      "web": "public/assets/products/gauze-dressing-pad/2-white.jpg"
+    },
+    {
+      "original": "public/assets/products/gamjee-roll/1.jpg",
+      "web": "public/assets/products/gamjee-roll/1-white.jpg"
+    },
+    {
+      "original": "public/assets/products/gamjee-roll/2.jpg",
+      "web": "public/assets/products/gamjee-roll/2-white.jpg"
+    },
+    {
+      "original": "public/assets/products/gamjee-roll/3.jpg",
+      "web": "public/assets/products/gamjee-roll/3-white.jpg"
+    },
+    {
+      "original": "public/assets/products/ribbon-gauze/1.png",
+      "web": "public/assets/products/ribbon-gauze/1-white.jpg"
+    },
+    {
+      "original": "public/assets/products/ribbon-gauze/2.png",
+      "web": "public/assets/products/ribbon-gauze/2-white.jpg"
+    },
+    {
+      "original": "public/assets/products/ribbon-gauze/3.png",
+      "web": "public/assets/products/ribbon-gauze/3-white.jpg"
+    },
+    {
+      "original": "public/assets/products/gauze-4-ply-roll/1.png",
+      "web": "public/assets/products/gauze-4-ply-roll/1-white.jpg"
+    },
+    {
+      "original": "public/assets/products/gauze-4-ply-roll/2.png",
+      "web": "public/assets/products/gauze-4-ply-roll/2-white.jpg"
+    },
+    {
+      "original": "public/assets/products/gauze-4-ply-roll/3.png",
+      "web": "public/assets/products/gauze-4-ply-roll/3-white.jpg"
+    },
+    {
+      "original": "public/assets/products/gauze-slitting-roll/1.png",
+      "web": "public/assets/products/gauze-slitting-roll/1-white.jpg"
+    },
+    {
+      "original": "public/assets/products/gauze-slitting-roll/2.png",
+      "web": "public/assets/products/gauze-slitting-roll/2-white.jpg"
+    },
+    {
+      "original": "public/assets/products/gauze-slitting-roll/3.png",
+      "web": "public/assets/products/gauze-slitting-roll/3-white.jpg"
+    },
+    {
+      "original": "public/assets/products/absorbent-cotton-roll/1.jpg",
+      "web": "public/assets/products/absorbent-cotton-roll/1-white.jpg"
+    },
+    {
+      "original": "public/assets/products/absorbent-cotton-roll/2.jpg",
+      "web": "public/assets/products/absorbent-cotton-roll/2-white.jpg"
+    },
+    {
+      "original": "public/assets/products/cotton-balls/1.jpg",
+      "web": "public/assets/products/cotton-balls/1-white.jpg"
+    },
+    {
+      "original": "public/assets/products/cotton-balls/2.jpg",
+      "web": "public/assets/products/cotton-balls/2-white.jpg"
+    },
+    {
+      "original": "public/assets/products/cotton-balls/3.jpg",
+      "web": "public/assets/products/cotton-balls/3-white.jpg"
+    },
+    {
+      "original": "public/assets/products/patient-gown/1.jpg",
+      "web": "public/assets/products/patient-gown/1-white.jpg"
+    },
+    {
+      "original": "public/assets/products/patient-gown/2.jpg",
+      "web": "public/assets/products/patient-gown/2-white.jpg"
+    },
+    {
+      "original": "public/assets/products/patient-gown/3.jpg",
+      "web": "public/assets/products/patient-gown/3-white.jpg"
+    },
+    {
+      "original": "public/assets/products/surgeon-doctor-gown/1.jpg",
+      "web": "public/assets/products/surgeon-doctor-gown/1-white.jpg"
+    },
+    {
+      "original": "public/assets/products/surgeon-doctor-gown/2.jpg",
+      "web": "public/assets/products/surgeon-doctor-gown/2-white.jpg"
+    },
+    {
+      "original": "public/assets/products/surgeon-doctor-gown/3.jpg",
+      "web": "public/assets/products/surgeon-doctor-gown/3-white.jpg"
+    },
+    {
+      "original": "public/assets/products/disposables-bed-sheet-pillow-cover/1.jpg",
+      "web": "public/assets/products/disposables-bed-sheet-pillow-cover/1-white.jpg"
+    },
+    {
+      "original": "public/assets/products/disposables-bed-sheet-pillow-cover/2.jpg",
+      "web": "public/assets/products/disposables-bed-sheet-pillow-cover/2-white.jpg"
+    },
+    {
+      "original": "public/assets/products/disposables-bed-sheet-pillow-cover/3.jpg",
+      "web": "public/assets/products/disposables-bed-sheet-pillow-cover/3-white.jpg"
+    }
+  ]
+}

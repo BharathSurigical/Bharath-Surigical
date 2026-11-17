@@ -852,7 +852,7 @@ p {
 .product-image {
   aspect-ratio: 1;
   overflow: hidden;
-  background: #cbdffc;
+  background: #ffffff;
 }
 
 .product-image img {
@@ -863,7 +863,7 @@ p {
 }
 
 .product-image-contain {
-  background: #cbdffc;
+  background: #ffffff;
 }
 
 .product-image-contain img {
@@ -1004,20 +1004,21 @@ p {
    ======================================== */
 .gov-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 2.6fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: 1.25rem;
 }
 
 .state-grid {
   display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1.25rem;
 }
 
 .state-card {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
   gap: 1.1rem;
   padding: 1.25rem;
   background: #ffffff;
@@ -1053,13 +1054,38 @@ p {
 
 .export-panel {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
+  align-content: center;
   align-items: center;
   gap: clamp(1.25rem, 4vw, 3rem);
   padding: clamp(1.5rem, 3vw, 2.25rem);
   background: var(--brand-soft);
   border: 1px solid #c4e0e0;
   border-radius: var(--radius);
+}
+
+.export-graphic {
+  display: block;
+  width: 132px;
+  height: 132px;
+  flex-shrink: 0;
+  object-fit: contain;
+  background: transparent;
+  mix-blend-mode: multiply;
+  border-radius: var(--radius-sm);
+}
+
+.export-trust {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.export-details {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(1.25rem, 4vw, 3rem);
 }
 
 .export-years {
@@ -1345,7 +1371,7 @@ p {
   position: relative;
   aspect-ratio: 1;
   overflow: hidden;
-  background: #cbdffc;
+  background: #ffffff;
   border-radius: var(--radius-lg);
   touch-action: pan-y;
 }
@@ -1358,7 +1384,7 @@ p {
 }
 
 .image-fit-contain {
-  background: #cbdffc;
+  background: #ffffff;
 }
 
 .image-fit-contain > img {
@@ -1404,7 +1430,7 @@ p {
 .gallery-thumbs button {
   padding: 0;
   overflow: hidden;
-  background: #cbdffc;
+  background: #ffffff;
   border: 2px solid transparent;
   border-radius: var(--radius-sm);
   cursor: pointer;
@@ -1427,7 +1453,7 @@ p {
 
 .gallery-thumbs button.image-fit-contain-thumb img {
   object-fit: contain;
-  background: #cbdffc;
+  background: #ffffff;
 }
 
 .detail-description {
@@ -1857,6 +1883,19 @@ p {
 }
 
 @media (max-width: 768px) {
+  .export-details {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .export-years {
+    padding-right: 0;
+    border-right: 0;
+  }
+
+  .state-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .topbar {
     display: none;
   }
@@ -1966,17 +2005,15 @@ p {
     padding: 1rem;
   }
 
-  .export-panel {
+  .export-panel,
+  .export-details {
     grid-template-columns: minmax(0, 1fr);
   }
 
   .export-years {
-    display: flex;
-    align-items: baseline;
-    gap: 0.75rem;
-    padding: 0 0 1rem;
+    padding: 0;
     border-right: 0;
-    border-bottom: 1px solid #b4d6d6;
+    border-bottom: 0;
   }
 
   .spec-table {
