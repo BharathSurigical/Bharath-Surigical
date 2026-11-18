@@ -23,7 +23,7 @@ if ('scrollRestoration' in window.history) {
 }
 window.scrollTo(0, 0);
 
-// White-background versions live beside the preserved original photos as
+// Product galleries use white-background photos named
 // 1-white.jpg, 2-white.jpg, ... in gallery order.
 // Products not listed here have 3 photos.
 const photoCounts = {
